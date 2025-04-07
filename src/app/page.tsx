@@ -46,13 +46,19 @@ export default function Home() {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/generate', {
+      // 使用简单的API调用，减少复杂性
+      const response = await fetch('/api/simple-generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt, size }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API error: ${response.status} - ${errorText}`);
+      }
 
       const data = await response.json();
       if (data.error) {
@@ -148,6 +154,12 @@ export default function Home() {
               <ImageSettings size={size} setSize={setSize} simplified={true} />
             </div>
           </div>
+        </div>
+
+        <div className="mt-4 text-center">
+          <p className="text-sm italic text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-slate-700 py-2 px-4 rounded-lg inline-block shadow-sm">
+            "{t('testimonial')}"
+          </p>
         </div>
       </div>
       
