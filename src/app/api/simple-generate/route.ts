@@ -17,10 +17,21 @@ export async function POST(request: Request) {
     
     console.log("正在生成图像，提示词:", prompt, "尺寸:", size);
     
+    // DALL-E 3 仅支持 1024x1024, 1024x1792, 1792x1024 尺寸
+    // DALL-E 2 支持 256x256, 512x512, 1024x1024
+    
+    // 确保尺寸兼容 DALL-E 3
+    let dalleSize: "1024x1024" | "1024x1792" | "1792x1024" = "1024x1024";
+    
+    if (size === "1024x1792" || size === "1792x1024") {
+      dalleSize = size as "1024x1792" | "1792x1024";
+    }
+    
     const response = await openai.images.generate({
-      prompt,
+      model: "dall-e-3", // 明确指定使用 DALL-E 3
+      prompt: prompt,
       n: 1,
-      size: size as "1024x1024" | "1024x1792" | "1792x1024",
+      size: dalleSize,
     });
     
     console.log("图像生成成功，URL:", response.data[0].url?.substring(0, 20) + "...");
@@ -36,7 +47,7 @@ export async function POST(request: Request) {
     return new Response(
       JSON.stringify({
         error: "生成图像时出错",
-        message: error.message
+        message: error.message || "未知错误"
       }),
       {
         status: 500,

@@ -1,10 +1,5 @@
 import React from 'react';
 import { useTranslation } from '@/lib/i18n';
-import { 
-  ViewfinderCircleIcon,
-  PhotoIcon,
-  DocumentIcon
-} from '@heroicons/react/24/outline';
 
 export type ImageSize = '1024x1024' | '1024x1792' | '1792x1024';
 
@@ -32,31 +27,36 @@ const ImageSettings: React.FC<ImageSettingsProps> = ({ size, setSize, simplified
   return (
     <div>
       {!simplified && <h3 className="font-medium mb-4 text-lg">{t('settings')}</h3>}
-      <div className={`${simplified ? 'flex gap-8 md:gap-12' : 'grid grid-cols-3 gap-3'}`}>
-        <button
+      <div className="flex flex-wrap gap-2 justify-center">
+        <button 
           className={`${buttonClasses} ${size === '1024x1024' ? activeClass : inactiveClass}`}
           onClick={() => setSize('1024x1024')}
+          title="1:1"
         >
-          <ViewfinderCircleIcon className={`${simplified ? 'h-6 w-6 mb-1' : 'h-6 w-6 mb-1'}`} />
-          <span className={`${simplified ? 'font-medium text-xs' : 'text-xs'}`}>(1:1)</span>
+          <div className="w-6 h-6 bg-slate-300 dark:bg-slate-600 rounded mb-1"></div>
+          <span className="text-xs">{t('square')}</span>
         </button>
-        <button
+        
+        <button 
           className={`${buttonClasses} ${size === '1024x1792' ? activeClass : inactiveClass}`}
           onClick={() => setSize('1024x1792')}
+          title="9:16"
         >
-          <DocumentIcon className={`${simplified ? 'h-6 w-6 mb-1' : 'h-6 w-6 mb-1'}`} />
-          <span className={`${simplified ? 'font-medium text-xs' : 'text-xs'}`}>(9:16)</span>
+          <div className="w-4 h-6 bg-slate-300 dark:bg-slate-600 rounded mb-1"></div>
+          <span className="text-xs">{t('portrait')}</span>
         </button>
-        <button
+        
+        <button 
           className={`${buttonClasses} ${size === '1792x1024' ? activeClass : inactiveClass}`}
           onClick={() => setSize('1792x1024')}
+          title="16:9"
         >
-          <PhotoIcon className={`${simplified ? 'h-6 w-6 mb-1' : 'h-6 w-6 mb-1'}`} />
-          <span className={`${simplified ? 'font-medium text-xs' : 'text-xs'}`}>(16:9)</span>
+          <div className="w-6 h-4 bg-slate-300 dark:bg-slate-600 rounded mb-1"></div>
+          <span className="text-xs">{t('landscape')}</span>
         </button>
       </div>
     </div>
   );
 };
 
-export default ImageSettings; 
+export default ImageSettings;
