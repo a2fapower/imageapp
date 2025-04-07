@@ -1,0 +1,55 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 星光粒子效果的滤镜 -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <!-- 闪光渐变效果 -->
+    <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFD700" />
+      <stop offset="50%" stop-color="#00B4D8" />
+      <stop offset="100%" stop-color="#FFD700" />
+    </linearGradient>
+  </defs>
+
+  <!-- 黑色背景 -->
+  <rect width="512" height="512" rx="128" fill="#000000" />
+
+  <!-- 钻石切割形状 -->
+  <g transform="translate(86, 76)" filter="url(#glow)">
+    <path d="M170 0L340 170L170 340L0 170L170 0Z" fill="#FFD700" />
+    <path d="M170 30L310 170L170 310L30 170L170 30Z" fill="#000000" />
+    <path d="M170 60L280 170L170 280L60 170L170 60Z" fill="#00B4D8" opacity="0.8" />
+    <path d="M170 90L250 170L170 250L90 170L170 90Z" fill="#FFD700" />
+    <path d="M170 120L220 170L170 220L120 170L170 120Z" fill="#FFFFFF" opacity="0.9" />
+  </g>
+  
+  <!-- 星光粒子 -->
+  <g>
+    <circle cx="136" cy="136" r="4" fill="white" opacity="0.8" />
+    <circle cx="376" cy="136" r="3" fill="white" opacity="0.7" />
+    <circle cx="256" cy="86" r="5" fill="white" opacity="0.9" />
+    <circle cx="376" cy="376" r="4" fill="white" opacity="0.8" />
+    <circle cx="136" cy="376" r="3" fill="white" opacity="0.7" />
+    <circle cx="196" cy="116" r="2" fill="white" opacity="0.6" />
+    <circle cx="316" cy="116" r="2" fill="white" opacity="0.6" />
+    <circle cx="316" cy="396" r="2" fill="white" opacity="0.6" />
+    <circle cx="196" cy="396" r="2" fill="white" opacity="0.6" />
+    <circle cx="106" cy="256" r="3" fill="white" opacity="0.7" />
+    <circle cx="406" cy="256" r="3" fill="white" opacity="0.7" />
+  </g>
+  
+  <!-- 文字部分 - 中文 -->
+  <g transform="translate(256, 430)" text-anchor="middle">
+    <text 
+      fill="url(#shine)" 
+      font-family="'阿里巴巴普惠体', sans-serif" 
+      font-weight="bold" 
+      font-size="70"
+      filter="url(#glow)">
+      闪画
+    </text>
+  </g>
+</svg> 
