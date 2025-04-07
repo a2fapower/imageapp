@@ -45,8 +45,13 @@ export default function Home() {
     }
 
     setLoading(true);
+    
+    // 添加加载提示，告知用户DALL-E需要时间
+    toast.loading(locale === 'zh' ? 'DALL-E 3正在创作中，请耐心等待15-30秒...' : 'DALL-E 3 is creating, please wait 15-30 seconds...', 
+      { duration: 30000 });
+    
     try {
-      // 使用简单的API调用，减少复杂性
+      // 使用简单的API调用
       const response = await fetch('/api/simple-generate', {
         method: 'POST',
         headers: {
@@ -78,9 +83,11 @@ export default function Home() {
       };
       
       setHistory((prev) => [newItem, ...prev]);
-      toast.success('Image generated successfully!');
+      toast.dismiss(); // 关闭加载提示
+      toast.success(locale === 'zh' ? '图像生成成功！' : 'Image generated successfully!');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to generate image');
+      toast.dismiss(); // 关闭加载提示
+      toast.error(error instanceof Error ? error.message : locale === 'zh' ? '生成图像失败' : 'Failed to generate image');
       console.error(error);
     } finally {
       setLoading(false);
@@ -148,6 +155,11 @@ export default function Home() {
               t('generateButton')
             )}
           </button>
+          
+          {/* 添加生成时间提示 */}
+          <p className="text-xs text-gray-500 text-center">
+            {locale === 'zh' ? 'AI生成高质量图像需要15-30秒，请耐心等待' : 'AI image generation takes 15-30 seconds, please be patient'}
+          </p>
           
           <div className="flex justify-center mt-5 mb-2">
             <div className="flex justify-center gap-8 md:gap-12">
