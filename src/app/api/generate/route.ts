@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 // 初始化OpenAI客户端
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+  timeout: 60000, // 添加60秒超时设置
 });
 
 export async function POST(request: Request) {
@@ -12,6 +13,14 @@ export async function POST(request: Request) {
     
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
+    }
+    
+    // 检查API密钥是否配置
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json(
+        { error: "OpenAI API key is not configured" },
+        { status: 500 }
+      );
     }
     
     // 根据选择的尺寸设置DALL-E参数
@@ -42,11 +51,17 @@ export async function POST(request: Request) {
     const revisedPrompt = response.data[0].revised_prompt;
     
     return NextResponse.json({ imageUrl, revisedPrompt });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error generating image:', error);
+    
+    // 改进错误处理，确保返回有效的JSON
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to generate image' },
-      { status: 500 }
+      { 
+        error: error.message || "生成图像过程中发生错误",
+        details: error.response?.data || {},
+        code: error.status || 500
+      },
+      { status: error.status || 500 }
     );
   }
-} 
+}
