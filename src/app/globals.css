@@ -12,15 +12,6 @@
   --accent-color: 16, 185, 129;
 }
 
-.dark {
-  --foreground-rgb: 226, 232, 240;
-  --background-start-rgb: 15, 23, 42;
-  --background-end-rgb: 30, 41, 59;
-  --primary-color: 59, 130, 246;
-  --secondary-color: 129, 140, 248;
-  --accent-color: 34, 211, 238;
-}
-
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -37,15 +28,15 @@ body {
   color: transparent;
   background-image: linear-gradient(
     to right, 
-    #FFD700, /* 金色 */
-    #00B4D8, /* 科技蓝 */
-    #FFD700  /* 金色 */
+    #4F46E5, /* 深紫色 */
+    #8B5CF6, /* 紫色 */
+    #EC4899  /* 粉色 */
   );
-  animation: gradient-shift 8s ease infinite;
   background-size: 200% 200%;
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 0 40px rgba(0, 180, 216, 0.3);
-  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.3));
-  letter-spacing: 2px;
+  text-shadow: 0 0 15px rgba(79, 70, 229, 0.4), 0 0 30px rgba(236, 72, 153, 0.2);
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.3));
+  letter-spacing: 1px;
+  animation: gradient-shift 8s ease infinite;
 }
 
 @keyframes gradient-shift {
@@ -61,7 +52,7 @@ body {
 }
 
 .card {
-  @apply bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300;
+  @apply bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300;
 }
 
 .btn-primary {
@@ -69,11 +60,11 @@ body {
 }
 
 .btn-secondary {
-  @apply bg-white dark:bg-slate-700 hover:bg-gray-100 dark:hover:bg-slate-600 text-slate-800 dark:text-white border border-gray-200 dark:border-slate-600 font-medium py-2 px-5 rounded-lg shadow-sm hover:shadow transition-all duration-300;
+  @apply bg-white hover:bg-gray-100 text-slate-800 border border-gray-200 font-medium py-2 px-5 rounded-lg shadow-sm hover:shadow transition-all duration-300;
 }
 
 .input-field {
-  @apply w-full p-4 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200;
+  @apply w-full p-4 border border-gray-200 rounded-lg bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200;
 }
 
 .setting-button {
@@ -85,5 +76,5 @@ body {
 }
 
 .setting-button-inactive {
-  @apply bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600;
+  @apply bg-white text-slate-700 hover:bg-gray-50 border border-gray-200;
 }

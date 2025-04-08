@@ -122,12 +122,12 @@ const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onApplySuggestion
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-md font-medium text-gray-300 dark:text-gray-400">{t('suggestions')}</h2>
+        <h2 className="text-md font-medium text-gray-700">{t('suggestions')}</h2>
         {hiddenSuggestions.length > 0 && (
           <button
             ref={buttonRef}
             onClick={toggleDropdown}
-            className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-800/50 dark:bg-slate-800/30 hover:bg-slate-700 dark:hover:bg-slate-700 transition-all hover:scale-105 text-gray-300"
+            className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 hover:bg-gray-400 transition-all hover:scale-105 text-gray-700"
             title={t('moreSuggestions')}
             aria-expanded={dropdownOpen}
           >
@@ -143,7 +143,7 @@ const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onApplySuggestion
           <button
             key={index}
             onClick={() => onApplySuggestion(suggestion)}
-            className="p-2.5 text-sm rounded-md bg-slate-800/70 dark:bg-slate-800/50 text-gray-200 dark:text-gray-200 hover:bg-indigo-600/80 dark:hover:bg-indigo-600/70 transition-all duration-200 hover:scale-102 text-left overflow-hidden border-0 shadow-sm"
+            className="p-2.5 text-sm rounded-md bg-white text-gray-800 hover:bg-indigo-600/80 hover:text-white transition-all duration-200 hover:scale-102 text-left overflow-hidden border border-gray-200 shadow-sm"
           >
             <span className="truncate block">{suggestion}</span>
           </button>
@@ -159,7 +159,7 @@ const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onApplySuggestion
                 onApplySuggestion(suggestion);
                 setDropdownOpen(false);
               }}
-              className="p-2.5 text-sm rounded-md bg-slate-800/70 dark:bg-slate-800/50 text-gray-200 dark:text-gray-200 hover:bg-indigo-600/80 dark:hover:bg-indigo-600/70 transition-all duration-200 hover:scale-102 text-left overflow-hidden border-0 shadow-sm"
+              className="p-2.5 text-sm rounded-md bg-white text-gray-800 hover:bg-indigo-600/80 hover:text-white transition-all duration-200 hover:scale-102 text-left overflow-hidden border border-gray-200 shadow-sm"
             >
               <span className="truncate block">{suggestion}</span>
             </button>

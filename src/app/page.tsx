@@ -4,12 +4,8 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
-import ThemeToggle from '@/components/ThemeToggle';
 import LanguageSelector from '@/components/LanguageSelector';
 import ImageSettings, { ImageSize } from '@/components/ImageSettings';
-import PromptSuggestions from '@/components/PromptSuggestions';
-import ImageActions from '@/components/ImageActions';
-import ImageHistory, { HistoryItem } from '@/components/ImageHistory';
 import { useTranslation } from '@/lib/i18n';
 
 export default function Home() {
@@ -19,7 +15,7 @@ export default function Home() {
   const [revisedPrompt, setRevisedPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [size, setSize] = useState<ImageSize>('1024x1024');
-  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [history, setHistory] = useState<any[]>([]);
 
   // Load history from localStorage
   useEffect(() => {
@@ -74,7 +70,7 @@ export default function Home() {
       setRevisedPrompt(data.revisedPrompt || prompt);
       
       // Add to history
-      const newItem: HistoryItem = {
+      const newItem = {
         id: uuidv4(),
         prompt: prompt,
         imageUrl: data.imageUrl,
@@ -94,115 +90,108 @@ export default function Home() {
     }
   };
 
-  const handleSelectFromHistory = (item: HistoryItem) => {
-    setPrompt(item.prompt);
-    setImageUrl(item.imageUrl);
-    setSize(item.size as ImageSize);
-    setRevisedPrompt('');
-  };
-
-  const clearHistory = () => {
-    setHistory([]);
-    localStorage.removeItem('imageHistory');
-    toast.success('History cleared');
-  };
-
-  const handlePromptSuggestion = (suggestion: string) => {
-    setPrompt(suggestion);
-  };
+  // 示例提示词
+  const examplePrompts = [
+    "A photorealistic image of a mountain landscape at sunset",
+    "A stylized digital art of a futuristic city",
+    "A watercolor painting of a forest with a river",
+  ];
 
   return (
-    <main className="min-h-screen p-4 md:p-8 max-w-7xl mx-auto transition-colors duration-200">
-      <div className="fixed top-4 right-4 z-30">
-        <ThemeToggle />
-      </div>
-      
-      <div className="fixed top-4 left-4 z-30">
+    <main className="min-h-screen p-4 max-w-md mx-auto">
+      <div className="w-24 absolute top-3 right-4">
         <LanguageSelector />
       </div>
-      
-      <div className="flex flex-col items-center justify-center mb-8 md:mb-10 mt-16 md:mt-12">
-        <h1 className="text-7xl md:text-8xl font-bold gradient-text animate-pulse">Kira</h1>
-        <p className="text-sm md:text-base mt-3 text-gray-500 dark:text-gray-400 max-w-md text-center">
-          {t('slogan')}
-        </p>
+
+      <div className="pt-12 mb-8 flex flex-col items-center">
+        <h1 className="text-5xl font-bold gradient-text leading-tight text-center">Kira</h1>
+        <p className="text-xs text-gray-500 mt-1 text-center">{t('slogan')}</p>
       </div>
       
-      <div className="max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto mb-6">
-        <div className="card p-4 md:p-8 space-y-4 md:space-y-6 shadow-lg">
+      <div className="mb-4">
+        <p className="mb-2 text-sm font-medium text-gray-600">{t('startDescription')}</p>
+        <div className="border border-gray-200 rounded-xl shadow-sm overflow-hidden">
           <textarea
-            className="input-field text-base md:text-lg"
-            rows={4}
+            className="w-full p-3 text-gray-700 text-base focus:outline-none min-h-[80px] resize-none"
             placeholder={t('promptPlaceholder')}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
           
-          <button
-            className="btn-primary w-full flex items-center justify-center text-base md:text-lg py-3 md:py-4"
-            onClick={generateImage}
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                {t('generatingButton')}
-              </>
-            ) : (
-              t('generateButton')
-            )}
-          </button>
-          
-          {/* 添加生成时间提示 */}
-          <p className="text-xs text-gray-500 text-center">
-            {locale === 'zh' ? 'Kira需要片刻时间，请耐心等待' : 'Kira needs a moment, please be patient'}
-          </p>
-          
-          <div className="flex justify-center mt-5 mb-2">
-            <div className="flex justify-center gap-8 md:gap-12">
-              <ImageSettings size={size} setSize={setSize} simplified={true} />
+          <div className="flex gap-2 p-2 bg-gray-50">
+            <div 
+              className="flex justify-between items-center w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-100"
+              onClick={() => {
+                // 实现surprise me功能
+                const surprisePrompts = [
+                  "A bowl of soup that is also a portal to another dimension, digital art",
+                  "A cosmic turtle carrying planets on its shell, hyperrealistic",
+                  "A library where books float and pages turn themselves, magical realism"
+                ];
+                setPrompt(surprisePrompts[Math.floor(Math.random() * surprisePrompts.length)]);
+              }}
+            >
+              <span className="text-sm text-gray-700 font-normal cursor-pointer">{t('surpriseMe')}</span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation(); // 阻止事件冒泡
+                  setPrompt(Math.random() < 0.5 ? examplePrompts[0] : examplePrompts[1]);
+                }}
+                className="w-8 h-8 flex items-center justify-center text-lg text-gray-600 font-medium"
+              >
+                +
+              </button>
             </div>
           </div>
         </div>
       </div>
       
-      <div className="max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
-        <div className="space-y-3 md:space-y-4">
-          {imageUrl && (
-            <div className="card p-3 md:p-5 shadow-lg">
-              <div className="relative rounded-lg overflow-hidden shadow-md" style={{ 
-                aspectRatio: size === '1024x1024' ? '1/1' : size === '1024x1792' ? '9/16' : '16/9'
-              }}>
-                <Image
-                  src={imageUrl}
-                  alt={prompt}
-                  fill
-                  className="object-cover"
-                  priority
-                  unoptimized={imageUrl.startsWith('data:')} // 对于base64图片不进行优化
-                />
-              </div>
-              
-              <div className="mt-3">
-                <ImageActions imageUrl={imageUrl} prompt={revisedPrompt || prompt} hideShareCopy={true} />
-              </div>
-            </div>
-          )}
-          
-          <div className="card p-4 md:p-6 shadow-lg">
-            <PromptSuggestions onApplySuggestion={handlePromptSuggestion} />
-          </div>
-          
-          <div className="card p-4 md:p-6 shadow-lg">
-            <ImageHistory 
-              history={history} 
-              onSelect={handleSelectFromHistory} 
-              onClear={clearHistory} 
+      <div className="mb-4">
+        <div className="flex gap-3 justify-start">
+          <ImageSettings size={size} setSize={setSize} simplified={true} />
+        </div>
+      </div>
+      
+      <button
+        className="w-full py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+        onClick={generateImage}
+        disabled={loading}
+      >
+        {loading ? t('generatingButton') : t('generateButton')}
+      </button>
+      
+      {imageUrl && (
+        <div className="mt-5 border border-gray-200 rounded-lg overflow-hidden">
+          <div className="relative" style={{ 
+            aspectRatio: size === '1024x1024' ? '1/1' : size === '1024x1792' ? '9/16' : '16/9'
+          }}>
+            <Image
+              src={imageUrl}
+              alt={prompt}
+              fill
+              className="object-cover"
+              priority
+              unoptimized={imageUrl.startsWith('data:')}
             />
           </div>
+        </div>
+      )}
+      
+      <div className="mt-6">
+        <p className="mb-2 text-sm font-medium text-gray-600">{t('tryExample')}</p>
+        <div className="grid grid-cols-1 gap-2">
+          {examplePrompts.map((example, index) => (
+            <div 
+              key={index}
+              className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 bg-gray-50 transition-colors"
+              onClick={() => setPrompt(example)}
+            >
+              <div className="w-16 h-16 bg-indigo-200 rounded-md flex-shrink-0 flex items-center justify-center">
+                <span className="text-indigo-600 text-xl font-semibold">{index + 1}</span>
+              </div>
+              <p className="text-sm text-gray-700">{example}</p>
+            </div>
+          ))}
         </div>
       </div>
     </main>

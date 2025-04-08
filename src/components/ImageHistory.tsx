@@ -27,7 +27,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ history, onSelect, onClear 
           <ClockIcon className="h-5 w-5 mr-2 text-indigo-500" />
           {t('history')}
         </h3>
-        <div className="text-slate-500 dark:text-slate-400 text-sm p-4 bg-gray-50 dark:bg-slate-800 rounded-lg flex items-center justify-center h-32">
+        <div className="text-slate-500 text-sm p-4 bg-gray-50 rounded-lg flex items-center justify-center h-32">
           {t('noImages')}
         </div>
       </div>
@@ -72,8 +72,8 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ history, onSelect, onClear 
                 </p>
               </div>
             </div>
-            <div className="p-2 bg-gray-50 dark:bg-slate-700/30 rounded-b-xl">
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+            <div className="p-2 bg-gray-100 rounded-b-xl">
+              <p className="text-xs text-slate-500">
                 {new Date(item.timestamp).toLocaleString(undefined, {
                   month: 'short',
                   day: 'numeric',

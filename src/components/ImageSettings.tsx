@@ -20,7 +20,7 @@ const ImageSettings: React.FC<ImageSettingsProps> = ({ size, setSize, simplified
           className={`px-3 py-2 rounded-full flex items-center ${
             size === '1024x1024' 
               ? 'bg-indigo-600 text-white' 
-              : 'bg-slate-700 dark:bg-slate-800 text-gray-300 dark:text-gray-300'
+              : 'bg-gray-200 text-gray-700'
           } transition-all duration-200 hover:scale-105`}
           onClick={() => setSize('1024x1024')}
           aria-label="Square 1:1"
@@ -33,7 +33,7 @@ const ImageSettings: React.FC<ImageSettingsProps> = ({ size, setSize, simplified
           className={`px-3 py-2 rounded-full flex items-center ${
             size === '1792x1024' 
               ? 'bg-indigo-600 text-white' 
-              : 'bg-slate-700 dark:bg-slate-800 text-gray-300 dark:text-gray-300'
+              : 'bg-gray-200 text-gray-700'
           } transition-all duration-200 hover:scale-105`}
           onClick={() => setSize('1792x1024')}
           aria-label="Landscape 16:9"
@@ -46,7 +46,7 @@ const ImageSettings: React.FC<ImageSettingsProps> = ({ size, setSize, simplified
           className={`px-3 py-2 rounded-full flex items-center ${
             size === '1024x1792' 
               ? 'bg-indigo-600 text-white' 
-              : 'bg-slate-700 dark:bg-slate-800 text-gray-300 dark:text-gray-300'
+              : 'bg-gray-200 text-gray-700'
           } transition-all duration-200 hover:scale-105`}
           onClick={() => setSize('1024x1792')}
           aria-label="Portrait 9:16"

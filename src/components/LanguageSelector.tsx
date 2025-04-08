@@ -28,7 +28,7 @@ const LanguageSelector: React.FC = () => {
         id="language-select"
         value={locale}
         onChange={handleLanguageChange}
-        className="w-full pl-8 pr-6 py-2 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-200 text-sm shadow-md hover:shadow-lg rounded-lg border-0 focus:ring-2 focus:ring-indigo-500 transition-all duration-200 appearance-none"
+        className="w-full pl-8 pr-6 py-2 bg-white text-gray-700 text-sm shadow-md hover:shadow-lg rounded-lg border border-gray-200 focus:ring-2 focus:ring-indigo-500 transition-all duration-200 appearance-none"
         aria-label={t('language')}
       >
         {supportedLocales.map((loc) => (
