@@ -121,29 +121,29 @@ const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onApplySuggestion
   
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-medium">{t('suggestions')}</h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-md font-medium text-gray-300 dark:text-gray-400">{t('suggestions')}</h2>
         {hiddenSuggestions.length > 0 && (
           <button
             ref={buttonRef}
             onClick={toggleDropdown}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-105"
+            className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-800/50 dark:bg-slate-800/30 hover:bg-slate-700 dark:hover:bg-slate-700 transition-all hover:scale-105 text-gray-300"
             title={t('moreSuggestions')}
             aria-expanded={dropdownOpen}
           >
             <ChevronDownIcon 
-              className={`h-5 w-5 transition-transform duration-200 ${dropdownOpen ? 'transform rotate-180' : ''}`} 
+              className={`h-3.5 w-3.5 transition-transform duration-200 ${dropdownOpen ? 'transform rotate-180' : ''}`} 
             />
           </button>
         )}
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {visibleSuggestions.map((suggestion, index) => (
           <button
             key={index}
             onClick={() => onApplySuggestion(suggestion)}
-            className="setting-button setting-button-inactive hover:scale-105 transition-transform duration-200 text-left overflow-hidden"
+            className="p-2.5 text-sm rounded-md bg-slate-800/70 dark:bg-slate-800/50 text-gray-200 dark:text-gray-200 hover:bg-indigo-600/80 dark:hover:bg-indigo-600/70 transition-all duration-200 hover:scale-102 text-left overflow-hidden border-0 shadow-sm"
           >
             <span className="truncate block">{suggestion}</span>
           </button>
@@ -151,7 +151,7 @@ const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onApplySuggestion
       </div>
       
       {dropdownOpen && hiddenSuggestions.length > 0 && (
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3" ref={dropdownRef}>
+        <div className="mt-2 grid grid-cols-2 gap-2" ref={dropdownRef}>
           {hiddenSuggestions.map((suggestion, index) => (
             <button
               key={index}
@@ -159,7 +159,7 @@ const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onApplySuggestion
                 onApplySuggestion(suggestion);
                 setDropdownOpen(false);
               }}
-              className="setting-button setting-button-inactive hover:scale-105 transition-transform duration-200 text-left overflow-hidden"
+              className="p-2.5 text-sm rounded-md bg-slate-800/70 dark:bg-slate-800/50 text-gray-200 dark:text-gray-200 hover:bg-indigo-600/80 dark:hover:bg-indigo-600/70 transition-all duration-200 hover:scale-102 text-left overflow-hidden border-0 shadow-sm"
             >
               <span className="truncate block">{suggestion}</span>
             </button>

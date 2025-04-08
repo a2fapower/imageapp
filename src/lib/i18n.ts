@@ -24,6 +24,7 @@ const translations = {
     hideSuggestions: 'Hide Suggestions',
     moreSuggestions: 'More Suggestions',
     slogan: 'Professional design in 10 seconds with AI',
+    testimonial: 'Create beautiful images with just a simple prompt',
   },
   zh: {
     title: '闪画',
@@ -46,6 +47,7 @@ const translations = {
     hideSuggestions: '隐藏建议',
     moreSuggestions: '更多建议',
     slogan: '让AI帮你10秒钟搞定专业级设计图',
+    testimonial: '只需一句简单的提示词，即可创建精美图像',
   },
   es: {
     title: 'Generador de Imágenes IA',
@@ -68,6 +70,7 @@ const translations = {
     hideSuggestions: 'Ocultar Sugerencias',
     moreSuggestions: 'Más Sugerencias',
     slogan: 'Diseño profesional en 10 segundos con IA',
+    testimonial: 'Crea hermosas imágenes con un simple prompt',
   },
   fr: {
     title: 'Générateur d\'Images IA',
@@ -90,6 +93,7 @@ const translations = {
     hideSuggestions: 'Masquer les Suggestions',
     moreSuggestions: 'Plus de Suggestions',
     slogan: 'Design professionnel en 10 secondes avec l\'IA',
+    testimonial: 'Créez de belles images avec un simple prompt',
   },
   de: {
     title: 'KI-Bildgenerator',
@@ -112,6 +116,7 @@ const translations = {
     hideSuggestions: 'Vorschläge Ausblenden',
     moreSuggestions: 'Mehr Vorschläge',
     slogan: 'Professionelles Design in 10 Sekunden mit KI',
+    testimonial: 'Erstellen Sie wunderschöne Bilder mit einem einfachen Prompt',
   },
   ja: {
     title: 'AI画像ジェネレーター',
@@ -134,6 +139,7 @@ const translations = {
     hideSuggestions: '提案を非表示',
     moreSuggestions: 'その他の提案',
     slogan: 'AIで10秒でプロレベルのデザインを',
+    testimonial: 'シンプルなプロンプトで美しい画像を作成',
   }
 };
 

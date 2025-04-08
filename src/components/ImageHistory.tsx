@@ -64,6 +64,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ history, onSelect, onClear 
                 fill
                 className="object-cover rounded-t-xl"
                 sizes="(max-width: 768px) 100vw, 25vw"
+                unoptimized={item.imageUrl.startsWith('data:')}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 rounded-t-xl transition-opacity duration-300 flex items-end">
                 <p className="px-3 py-2 text-white text-xs truncate w-full">

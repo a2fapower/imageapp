@@ -12,47 +12,47 @@ interface ImageSettingsProps {
 const ImageSettings: React.FC<ImageSettingsProps> = ({ size, setSize, simplified = false }) => {
   const { t } = useTranslation();
 
-  const buttonClasses = simplified 
-    ? 'p-3 min-w-[90px] rounded-xl transition-all duration-300 flex flex-col items-center justify-center'
-    : `setting-button flex flex-col items-center justify-center py-3`;
-
-  const activeClass = simplified
-    ? 'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg transform scale-105'
-    : 'setting-button-active';
-    
-  const inactiveClass = simplified
-    ? 'bg-slate-100/80 dark:bg-slate-800/70 hover:bg-slate-200 dark:hover:bg-slate-700/90 hover:scale-105 border border-slate-200 dark:border-slate-700'
-    : 'setting-button-inactive';
-
   return (
     <div>
       {!simplified && <h3 className="font-medium mb-4 text-lg">{t('settings')}</h3>}
-      <div className="flex flex-wrap gap-2 justify-center">
+      <div className="flex gap-3 justify-center">
         <button 
-          className={`${buttonClasses} ${size === '1024x1024' ? activeClass : inactiveClass}`}
+          className={`px-3 py-2 rounded-full flex items-center ${
+            size === '1024x1024' 
+              ? 'bg-indigo-600 text-white' 
+              : 'bg-slate-700 dark:bg-slate-800 text-gray-300 dark:text-gray-300'
+          } transition-all duration-200 hover:scale-105`}
           onClick={() => setSize('1024x1024')}
-          title="1:1"
+          aria-label="Square 1:1"
         >
-          <div className="w-6 h-6 bg-slate-300 dark:bg-slate-600 rounded mb-1"></div>
-          <span className="text-xs">{t('square')}</span>
+          <div className="w-5 h-5 border-2 border-current rounded-sm mr-2"></div>
+          <span className="text-sm">1:1</span>
         </button>
         
         <button 
-          className={`${buttonClasses} ${size === '1024x1792' ? activeClass : inactiveClass}`}
-          onClick={() => setSize('1024x1792')}
-          title="9:16"
-        >
-          <div className="w-4 h-6 bg-slate-300 dark:bg-slate-600 rounded mb-1"></div>
-          <span className="text-xs">{t('portrait')}</span>
-        </button>
-        
-        <button 
-          className={`${buttonClasses} ${size === '1792x1024' ? activeClass : inactiveClass}`}
+          className={`px-3 py-2 rounded-full flex items-center ${
+            size === '1792x1024' 
+              ? 'bg-indigo-600 text-white' 
+              : 'bg-slate-700 dark:bg-slate-800 text-gray-300 dark:text-gray-300'
+          } transition-all duration-200 hover:scale-105`}
           onClick={() => setSize('1792x1024')}
-          title="16:9"
+          aria-label="Landscape 16:9"
         >
-          <div className="w-6 h-4 bg-slate-300 dark:bg-slate-600 rounded mb-1"></div>
-          <span className="text-xs">{t('landscape')}</span>
+          <div className="w-7 h-4 border-2 border-current rounded-sm mr-2"></div>
+          <span className="text-sm">16:9</span>
+        </button>
+        
+        <button 
+          className={`px-3 py-2 rounded-full flex items-center ${
+            size === '1024x1792' 
+              ? 'bg-indigo-600 text-white' 
+              : 'bg-slate-700 dark:bg-slate-800 text-gray-300 dark:text-gray-300'
+          } transition-all duration-200 hover:scale-105`}
+          onClick={() => setSize('1024x1792')}
+          aria-label="Portrait 9:16"
+        >
+          <div className="w-4 h-7 border-2 border-current rounded-sm mr-2"></div>
+          <span className="text-sm">9:16</span>
         </button>
       </div>
     </div>

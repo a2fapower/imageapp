@@ -34,10 +34,35 @@ export async function POST(request: Request) {
       size: dalleSize,
     });
     
+    if (!response.data[0].url) {
+      throw new Error("未能获取图像URL");
+    }
+    
     console.log("图像生成成功，URL:", response.data[0].url?.substring(0, 20) + "...");
     
+    // 立即下载图像数据
+    const imageResponse = await fetch(response.data[0].url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+    
+    if (!imageResponse.ok) {
+      throw new Error(`无法获取图像数据: ${imageResponse.status} ${imageResponse.statusText}`);
+    }
+    
+    // 获取图像数据为Buffer
+    const imageBuffer = await imageResponse.arrayBuffer();
+    
+    // 获取图像内容类型
+    const contentType = imageResponse.headers.get('content-type') || 'image/png';
+    
+    // 将图像数据转换为Base64
+    const base64Image = Buffer.from(imageBuffer).toString('base64');
+    const dataURL = `data:${contentType};base64,${base64Image}`;
+    
     return NextResponse.json({
-      imageUrl: response.data[0].url,
+      imageUrl: dataURL,
       revisedPrompt: response.data[0].revised_prompt,
     });
   } catch (error: any) {

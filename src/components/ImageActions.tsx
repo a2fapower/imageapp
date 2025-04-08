@@ -18,40 +18,55 @@ const ImageActions: React.FC<ImageActionsProps> = ({ imageUrl, prompt, hideShare
     try {
       toast.loading('Downloading image...');
       
-      // 使用我们的代理API
-      const response = await fetch('/api/download', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ imageUrl }),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+      if (imageUrl.startsWith('data:')) {
+        // 如果已经是data URL，直接使用
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = `kira-image-${Date.now()}.png`;
+        
+        // 添加到DOM，点击并移除
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        toast.dismiss();
+        toast.success('Image downloaded successfully');
+      } else {
+        // 旧的URL形式，使用后端代理下载
+        const response = await fetch('/api/download', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ imageUrl }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+        }
+        
+        // 获取图像blob
+        const blob = await response.blob();
+        
+        // 创建一个blob URL
+        const url = window.URL.createObjectURL(blob);
+        
+        // 创建一个临时链接元素
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `kira-image-${Date.now()}.png`;
+        
+        // 添加到DOM，点击并移除
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // 释放blob URL
+        window.URL.revokeObjectURL(url);
+        
+        toast.dismiss();
+        toast.success('Image downloaded successfully');
       }
-      
-      // 获取图像blob
-      const blob = await response.blob();
-      
-      // 创建一个blob URL
-      const url = window.URL.createObjectURL(blob);
-      
-      // 创建一个临时链接元素
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `kira-image-${Date.now()}.png`;
-      
-      // 添加到DOM，点击并移除
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // 释放blob URL
-      window.URL.revokeObjectURL(url);
-      
-      toast.dismiss();
-      toast.success('Image downloaded successfully');
     } catch (error) {
       console.error('Error downloading image:', error);
       toast.dismiss();

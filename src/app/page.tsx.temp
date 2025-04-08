@@ -1,0 +1,2 @@
+// 临时文件，用于查看page.tsx的当前内容
+cat src/app/page.tsx
