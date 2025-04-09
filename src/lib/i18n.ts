@@ -1,10 +1,45 @@
 import { useState, useEffect } from 'react';
 
-type Locale = 'en' | 'zh' | 'es' | 'fr' | 'de' | 'ja';
+// 只支持英文和中文
+type Locale = 'en' | 'zh';
 
-const translations = {
+// 翻译类型定义
+export type TranslationType = {
+  title: string;
+  promptPlaceholder: string;
+  generateButton: string;
+  generatingButton: string;
+  settings: string;
+  square: string;
+  portrait: string;
+  landscape: string;
+  download: string;
+  copyPrompt: string;
+  history: string;
+  clearAll: string;
+  noImages: string;
+  suggestions: string;
+  language: string;
+  share: string;
+  showSuggestions: string;
+  hideSuggestions: string;
+  moreSuggestions: string;
+  slogan: string;
+  testimonial: string;
+  startDescription: string;
+  surpriseMe: string;
+  chooseSize: string;
+  tryExample: string;
+  // 示例提示词
+  examplePrompts: string[];
+  // 随机提示词模板
+  promptTemplates: string[];
+};
+
+// 翻译对象
+export const translations: Record<Locale, TranslationType> = {
   en: {
-    title: 'Kira',
+    title: 'Kirami',
     promptPlaceholder: 'Describe what you want to see (e.g. A sunset over a mountain lake)',
     generateButton: 'Generate',
     generatingButton: 'Generating...',
@@ -28,10 +63,54 @@ const translations = {
     startDescription: 'Start with a detailed description',
     surpriseMe: 'Surprise me',
     chooseSize: 'Choose size',
-    tryExample: 'Try an example made with Kira',
+    tryExample: 'Try an example',
+    // 示例提示词
+    examplePrompts: [
+      "A cat standing on the moon with humans beside it, Earth in the background, realistic style",
+      "An astronaut riding a camel in the desert, realistic photo",
+      "An elephant watching TV in a living room, realistic style"
+    ],
+    // 随机提示词模板
+    promptTemplates: [
+      "A cat in a space suit floating in space with nebulas and planets in the background, photorealistic",
+      "An ancient library where books fly and organize themselves, magical light illuminating, surrealism",
+      "A crystal castle built on clouds with a rainbow as bridge, dreamlike style",
+      "A fox and rabbit having afternoon tea, dressed in Victorian-era clothing, fairy tale style",
+      "A city made of giant mechanical gears and antique clock parts, steampunk style",
+      "A river of stars flowing across the night sky with glowing creatures around, fantasy art",
+      "A miniature world existing on a leaf with tiny houses and inhabitants, macro photography",
+      "An abandoned amusement park reclaimed by nature, vines wrapping around roller coasters, realistic style",
+      "A city built on giant trees with wooden bridges and lanterns, magical realism",
+      "Ancient civilization ruins underwater with statues and buildings, underwater photography effect",
+      "A massive crystal ball containing the entire universe, reflecting galaxies and nebulas, concept art",
+      "Dinosaurs and modern animals peacefully coexisting in an oasis, nature documentary style",
+      "A robot barista making beautiful lattes in a futuristic coffee shop, cyberpunk style",
+      "A fantasy world made of candy and desserts, vibrant illustration style",
+      "A path built from books leading to a palace of knowledge, surrealist painting",
+      "A mysterious figure controlling the weather on a mountaintop, surrounded by lightning and clouds, epic scene",
+      "Giant whales swimming in the sky above a city as if in the ocean, surrealism",
+      "A palace made of various musical instruments with musical notes floating in the air, fantasy art",
+      "An old-fashioned train station with a steam train just arriving, 1920s vintage style",
+      "A future city established on the moon surface, domes protecting green vegetation, sci-fi art",
+      "A firefly illuminating the entire forest with magical light, dreamy photograph",
+      "An ice-sculpted palace with northern lights dancing in the sky, winter wonderland",
+      "Giant mechanical creatures coexisting harmoniously with small organic beings, cyborg style",
+      "A tunnel through time and space showing important historical moments from ancient to present, concept art",
+      "A world made of folded paper including mountains, trees and animals, origami art",
+      "A deep-sea octopus conducting an underwater orchestra with sea creatures as musicians, fantasy art",
+      "An island floating in the sky with waterfalls cascading down to the clouds below, fantasy landscape",
+      "A surreal space made of various clocks where time flows visibly, surrealism",
+      "A miniature city built in a bonsai pot with trains circling small mountains and trees, miniature photography",
+      "Various fruits floating in space and exploding into juice nebulas, high-speed photography",
+      "A being made of light wandering in an ancient forest, emitting mysterious glow, dreamy forest",
+      "A bridge connecting two completely different worlds: medieval castle on one side, futuristic city on the other, fantasy concept art",
+      "A magic mirror that sees all possible futures, surrounded by mysterious runes, fantasy illustration",
+      "An underwater city made of coral and marine life with fish as residents, ocean fantasy",
+      "Stunning northern lights with glowing reindeer running in the snow, magical winter scene"
+    ]
   },
   zh: {
-    title: '闪画',
+    title: 'Kirami',
     promptPlaceholder: '描述你想看到的图像（例如：日落时的山湖）',
     generateButton: '生成',
     generatingButton: '生成中...',
@@ -56,114 +135,50 @@ const translations = {
     surpriseMe: '给我惊喜',
     chooseSize: '选择尺寸',
     tryExample: '尝试示例',
-  },
-  es: {
-    title: 'Generador de Imágenes IA',
-    promptPlaceholder: 'Describe la imagen que quieres generar...',
-    generateButton: 'Generar',
-    generatingButton: 'Generando...',
-    settings: 'Configuración de Imagen',
-    square: 'Cuadrado',
-    portrait: 'Retrato',
-    landscape: 'Paisaje',
-    download: 'Descargar',
-    copyPrompt: 'Copiar Prompt',
-    history: 'Historial',
-    clearAll: 'Borrar Todo',
-    noImages: 'Aún no se han generado imágenes.',
-    suggestions: 'Sugerencias de Prompts',
-    language: 'Idioma',
-    share: 'Compartir',
-    showSuggestions: 'Mostrar Sugerencias',
-    hideSuggestions: 'Ocultar Sugerencias',
-    moreSuggestions: 'Más Sugerencias',
-    slogan: 'Diseño profesional en 10 segundos con IA',
-    testimonial: 'Crea hermosas imágenes con un simple prompt',
-    startDescription: 'Comienza con una descripción detallada',
-    surpriseMe: 'Sorpréndeme',
-    chooseSize: 'Elegir tamaño',
-    tryExample: 'Prueba un ejemplo',
-  },
-  fr: {
-    title: 'Générateur d\'Images IA',
-    promptPlaceholder: 'Décrivez l\'image que vous souhaitez générer...',
-    generateButton: 'Générer',
-    generatingButton: 'Génération...',
-    settings: 'Paramètres d\'Image',
-    square: 'Carré',
-    portrait: 'Portrait',
-    landscape: 'Paysage',
-    download: 'Télécharger',
-    copyPrompt: 'Copier le Prompt',
-    history: 'Historique',
-    clearAll: 'Tout Effacer',
-    noImages: 'Aucune image générée pour le moment.',
-    suggestions: 'Suggestions de Prompts',
-    language: 'Langue',
-    share: 'Partager',
-    showSuggestions: 'Afficher les Suggestions',
-    hideSuggestions: 'Masquer les Suggestions',
-    moreSuggestions: 'Plus de Suggestions',
-    slogan: 'Design professionnel en 10 secondes avec l\'IA',
-    testimonial: 'Créez de belles images avec un simple prompt',
-    startDescription: 'Commencez par une description détaillée',
-    surpriseMe: 'Surprenez-moi',
-    chooseSize: 'Choisir la taille',
-    tryExample: 'Essayez un exemple',
-  },
-  de: {
-    title: 'KI-Bildgenerator',
-    promptPlaceholder: 'Beschreiben Sie das Bild, das Sie generieren möchten...',
-    generateButton: 'Generieren',
-    generatingButton: 'Generiere...',
-    settings: 'Bildeinstellungen',
-    square: 'Quadrat',
-    portrait: 'Hochformat',
-    landscape: 'Querformat',
-    download: 'Herunterladen',
-    copyPrompt: 'Prompt Kopieren',
-    history: 'Verlauf',
-    clearAll: 'Alles Löschen',
-    noImages: 'Noch keine Bilder generiert.',
-    suggestions: 'Prompt-Vorschläge',
-    language: 'Sprache',
-    share: 'Teilen',
-    showSuggestions: 'Vorschläge Anzeigen',
-    hideSuggestions: 'Vorschläge Ausblenden',
-    moreSuggestions: 'Mehr Vorschläge',
-    slogan: 'Professionelles Design in 10 Sekunden mit KI',
-    testimonial: 'Erstellen Sie wunderschöne Bilder mit einem einfachen Prompt',
-    startDescription: 'Beginnen Sie mit einer detaillierten Beschreibung',
-    surpriseMe: 'Überraschen Sie mich',
-    chooseSize: 'Größe wählen',
-    tryExample: 'Beispiel ausprobieren',
-  },
-  ja: {
-    title: 'AI画像ジェネレーター',
-    promptPlaceholder: '生成したい画像を説明してください...',
-    generateButton: '生成',
-    generatingButton: '生成中...',
-    settings: '画像設定',
-    square: '正方形',
-    portrait: '縦向き',
-    landscape: '横向き',
-    download: 'ダウンロード',
-    copyPrompt: 'プロンプトをコピー',
-    history: '履歴',
-    clearAll: 'すべて消去',
-    noImages: 'まだ画像が生成されていません。',
-    suggestions: 'プロンプト提案',
-    language: '言語',
-    share: 'シェア',
-    showSuggestions: '提案を表示',
-    hideSuggestions: '提案を非表示',
-    moreSuggestions: 'その他の提案',
-    slogan: 'AIで10秒でプロレベルのデザインを',
-    testimonial: 'シンプルなプロンプトで美しい画像を作成',
-    startDescription: '詳細な説明から始める',
-    surpriseMe: '驚かせて',
-    chooseSize: 'サイズを選択',
-    tryExample: '例を試す',
+    // 示例提示词
+    examplePrompts: [
+      "一只猫站在月球上，旁边还有几个人类，背景是地球，贴近现实",
+      "一个在沙漠中骑骆驼的太空人，真实的照片",
+      "一只大象在客厅看电视，贴近现实"
+    ],
+    // 随机提示词模板
+    promptTemplates: [
+      "一只穿着太空服的猫咪漂浮在太空中，背景是星云和行星，照片风格",
+      "一个古老的图书馆，书籍自动飞舞整理，魔法般的光芒照耀，超现实主义",
+      "一座水晶城堡建在云端上，彩虹作为桥梁，梦幻风格",
+      "一只狐狸和一只兔子在下午茶，身穿维多利亚时代服装，童话风格",
+      "巨大的机械齿轮和老式钟表零件组成的城市，蒸汽朋克风格",
+      "一条由星星组成的河流在夜空中流淌，周围有发光的生物，幻想艺术",
+      "一个微型世界存在于一片树叶上，有小房子和居民，微距摄影",
+      "一个被遗弃的游乐园被大自然重新占领，藤蔓缠绕过山车，写实风格",
+      "一座建在巨树上的城市，有木制天桥和灯笼，魔幻现实主义",
+      "海底的古代文明遗迹，有雕像和建筑，水下摄影效果",
+      "一个巨大的水晶球中包含了整个宇宙，反射出星系和星云，概念艺术",
+      "恐龙和现代动物和平共处在一个绿洲中，自然纪录片风格",
+      "一位机器人咖啡师在未来风格的咖啡店制作精美的拿铁，赛博朋克风格",
+      "一个由糖果和甜点组成的奇幻世界，色彩鲜艳的插画风格",
+      "一条由书本搭建的路通向一座知识宫殿，超现实主义绘画",
+      "一个能控制天气的神秘人物站在山顶，周围有闪电和云雾，史诗般的场景",
+      "巨大的鲸鱼在城市的天空中游弋，如同在海洋中一样，超现实主义",
+      "一座由各种乐器组成的宫殿，音符在空中飘舞，幻想艺术",
+      "一个老式火车站，蒸汽火车刚刚进站，1920年代的复古风格",
+      "在月球表面建立的未来城市，穹顶保护着绿色植被，科幻艺术",
+      "一只萤火虫照亮了整个森林，魔法般的光芒，梦幻照片",
+      "一座由冰雕成的宫殿，北极光在天空中舞动，冬季仙境",
+      "巨型机械生物和小型有机生物和谐共处，赛博格风格",
+      "一条穿越时空的隧道，展示从古至今的重要历史时刻，概念艺术",
+      "一个由纸折成的世界，包括山脉、树木和动物，折纸艺术",
+      "深海章鱼指挥着水下管弦乐队，海洋生物作为乐手，奇幻艺术",
+      "一座漂浮在天空中的岛屿，有瀑布垂落到下方的云层，幻想风景",
+      "一个由各种钟表组成的超现实空间，时间以可视方式流动，超现实主义",
+      "一个微缩的城市建在盆栽中，火车环绕着小山和树木行驶，微缩摄影",
+      "各种水果在太空中漂浮并爆炸成汁液星云，高速摄影",
+      "一个由光组成的存在在古老森林中游荡，发出神秘光芒，梦幻森林",
+      "一座桥梁连接两个截然不同的世界：一边是中世纪城堡，另一边是未来都市，幻想概念艺术",
+      "一个能看到所有可能未来的魔法镜子，周围环绕着神秘符文，奇幻插画",
+      "一个由珊瑚和海洋生物组成的水下城市，鱼类作为居民，海洋幻想",
+      "绚丽的北极光下，一群发光的驯鹿在雪地上奔跑，魔幻冬季场景"
+    ]
   }
 };
 
@@ -182,9 +197,7 @@ export const useTranslation = () => {
     const supportedLocales = Object.keys(translations) as Locale[];
     const defaultLocale = savedLocale && supportedLocales.includes(savedLocale) 
       ? savedLocale 
-      : supportedLocales.includes(browserLocale) 
-        ? browserLocale 
-        : 'en';
+      : (browserLocale === 'zh' ? 'zh' : 'en');
     
     globalLocale = defaultLocale;
     setLocale(defaultLocale);
@@ -199,7 +212,7 @@ export const useTranslation = () => {
     window.location.reload();
   };
 
-  const t = (key: keyof typeof translations.en) => {
+  const t = (key: keyof TranslationType): string | string[] => {
     return translations[locale][key] || translations.en[key];
   };
 

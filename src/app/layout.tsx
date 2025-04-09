@@ -6,8 +6,8 @@ import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Kira | 闪画 - AI Image Generator",
-  description: "Generate stunning AI images instantly with Kira (闪画), powered by DALL-E 3",
+  title: "Kirami - AI Image Generator",
+  description: "Generate stunning AI images instantly with Kirami, powered by DALL-E 3",
   icons: {
     icon: '/favicon.svg',
   },

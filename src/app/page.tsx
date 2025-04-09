@@ -4,8 +4,12 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
+import ThemeToggle from '@/components/ThemeToggle';
 import LanguageSelector from '@/components/LanguageSelector';
 import ImageSettings, { ImageSize } from '@/components/ImageSettings';
+import PromptSuggestions from '@/components/PromptSuggestions';
+import ImageActions from '@/components/ImageActions';
+import ImageHistory, { HistoryItem } from '@/components/ImageHistory';
 import { useTranslation } from '@/lib/i18n';
 
 export default function Home() {
@@ -15,7 +19,7 @@ export default function Home() {
   const [revisedPrompt, setRevisedPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [size, setSize] = useState<ImageSize>('1024x1024');
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
   // Load history from localStorage
   useEffect(() => {
@@ -43,7 +47,7 @@ export default function Home() {
     setLoading(true);
     
     // 添加加载提示，告知用户DALL-E需要时间
-    toast.loading(locale === 'zh' ? 'Kira正在创作中，请耐心等待！' : 'Kira is creating, please wait!', 
+    toast.loading(locale === 'zh' ? 'Kirami正在创作中，请耐心等待！' : 'Kirami is creating, please wait!', 
       { duration: 30000 });
     
     try {
@@ -90,11 +94,15 @@ export default function Home() {
     }
   };
 
-  // 示例提示词
-  const examplePrompts = [
-    "A photorealistic image of a mountain landscape at sunset",
-    "A stylized digital art of a futuristic city",
-    "A watercolor painting of a forest with a river",
+  // 示例提示词和提示词模板从翻译中获取
+  const examplePrompts = t('examplePrompts') as string[];
+  const promptTemplates = t('promptTemplates') as string[];
+
+  // 使用本地图片路径
+  const exampleImages = [
+    "/examples/moon-cat.jpg",
+    "/examples/camel-astronaut.jpg",
+    "/examples/elephant-tv.jpg"
   ];
 
   return (
@@ -104,23 +112,23 @@ export default function Home() {
       </div>
 
       <div className="pt-12 mb-8 flex flex-col items-center">
-        <h1 className="text-5xl font-bold gradient-text leading-tight text-center">Kira</h1>
+        <h1 className="text-5xl font-bold gradient-text leading-tight text-center">Kirami</h1>
         <p className="text-xs text-gray-500 mt-1 text-center">{t('slogan')}</p>
       </div>
       
       <div className="mb-4">
-        <p className="mb-2 text-sm font-medium text-gray-600">{t('startDescription')}</p>
-        <div className="border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <p className="mb-2 text-sm font-bold text-gray-900 pl-2">{t('startDescription')}</p>
+        <div className="border-2 border-[#8B5CF6] rounded-xl shadow-sm overflow-hidden">
           <textarea
-            className="w-full p-3 text-gray-700 text-base focus:outline-none min-h-[80px] resize-none"
-            placeholder={t('promptPlaceholder')}
+            className="w-full p-3.5 text-gray-700 text-base focus:outline-none min-h-[110px] resize-none"
+            placeholder={t('promptPlaceholder') as string}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
           
-          <div className="flex gap-2 p-2 bg-gray-50">
+          <div className="flex gap-1 p-1.5 bg-gray-50">
             <div 
-              className="flex justify-between items-center w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-100"
+              className="flex justify-between items-center w-full px-4 py-0.5 border border-gray-200 rounded-md bg-gray-200"
               onClick={() => {
                 // 实现surprise me功能
                 const surprisePrompts = [
@@ -135,9 +143,11 @@ export default function Home() {
               <button
                 onClick={(e) => {
                   e.stopPropagation(); // 阻止事件冒泡
-                  setPrompt(Math.random() < 0.5 ? examplePrompts[0] : examplePrompts[1]);
+                  // 从大量模板中随机选择一个提示词
+                  const randomIndex = Math.floor(Math.random() * promptTemplates.length);
+                  setPrompt(promptTemplates[randomIndex]);
                 }}
-                className="w-8 h-8 flex items-center justify-center text-lg text-gray-600 font-medium"
+                className="w-10 h-10 flex items-center justify-center text-xl text-gray-600 font-medium"
               >
                 +
               </button>
@@ -157,7 +167,9 @@ export default function Home() {
         onClick={generateImage}
         disabled={loading}
       >
-        {loading ? t('generatingButton') : t('generateButton')}
+        <span className="text-base font-bold">
+          {loading ? t('generatingButton') : t('generateButton')}
+        </span>
       </button>
       
       {imageUrl && (
@@ -178,7 +190,7 @@ export default function Home() {
       )}
       
       <div className="mt-6">
-        <p className="mb-2 text-sm font-medium text-gray-600">{t('tryExample')}</p>
+        <p className="mb-2 text-sm font-bold text-gray-900 pl-2">{t('tryExample')}</p>
         <div className="grid grid-cols-1 gap-2">
           {examplePrompts.map((example, index) => (
             <div 
@@ -186,8 +198,12 @@ export default function Home() {
               className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 bg-gray-50 transition-colors"
               onClick={() => setPrompt(example)}
             >
-              <div className="w-16 h-16 bg-indigo-200 rounded-md flex-shrink-0 flex items-center justify-center">
-                <span className="text-indigo-600 text-xl font-semibold">{index + 1}</span>
+              <div className="w-16 h-16 rounded-md flex-shrink-0 overflow-hidden">
+                <img
+                  src={exampleImages[index]}
+                  alt={example}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <p className="text-sm text-gray-700">{example}</p>
             </div>
