@@ -44,9 +44,8 @@ const GenerationProgress: React.FC<GenerationProgressProps> = ({ prompt, onCance
 
       <div className="flex flex-col h-[calc(100%-60px)] overflow-y-auto">
         <div className="p-4 pt-2 pb-0 max-w-md mx-auto w-full">
-          <div className="grid grid-cols-2 gap-3 w-full mb-4">
-            <div className="aspect-square bg-gray-100 rounded-lg animate-pulse shadow-sm"></div>
-            <div className="aspect-square bg-gray-100 rounded-lg animate-pulse shadow-sm"></div>
+          <div className="w-full mb-4">
+            <div className="aspect-square bg-gray-100 rounded-lg animate-pulse shadow-sm w-full"></div>
           </div>
           
           <div className="border-2 border-[#8B5CF6] rounded-lg p-4 mb-3 bg-white">

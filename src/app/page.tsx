@@ -13,6 +13,7 @@ import ImageHistory, { HistoryItem } from '@/components/ImageHistory';
 import { useTranslation } from '@/lib/i18n';
 import GenerationProgress from '@/components/GenerationProgress';
 import GenerationResults from '@/components/GenerationResults';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 export default function Home() {
   const { t, locale } = useTranslation();
@@ -26,6 +27,7 @@ export default function Home() {
   const [size, setSize] = useState<ImageSize>('1024x1024');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showEmptyError, setShowEmptyError] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   // Load history from localStorage
   useEffect(() => {
@@ -147,6 +149,16 @@ export default function Home() {
     "/examples/camel-astronaut.jpg"
   ];
 
+  // 图片预览功能
+  const handleExampleImageClick = (e: React.MouseEvent, imagePath: string) => {
+    e.stopPropagation(); // 阻止事件冒泡，不触发设置prompt
+    setPreviewImage(imagePath);
+  };
+  
+  const closeImagePreview = () => {
+    setPreviewImage(null);
+  };
+
   return (
     <main className="min-h-screen p-4 max-w-md mx-auto">
       <div className="w-24 absolute top-3 right-4">
@@ -174,7 +186,7 @@ export default function Home() {
       </div>
       
       <div className="mb-4">
-        <p className="mb-2 text-sm font-bold text-gray-900 pl-2">{t('startDescription')}</p>
+        <p className="mb-2 text-base font-bold text-gray-900 pl-2">{t('startDescription')}</p>
         <div className={`border-2 ${!prompt && showEmptyError ? 'border-red-400' : 'border-[#8B5CF6]'} rounded-xl shadow-sm overflow-hidden relative transition-colors duration-300`}>
           <textarea
             className="w-full p-3.5 text-gray-700 text-base focus:outline-none min-h-[110px] resize-none peer transition-shadow hover:shadow-inner focus:shadow-inner"
@@ -244,7 +256,7 @@ export default function Home() {
       </div>
       
       <div className="mt-6">
-        <p className="mb-2 text-sm font-bold text-gray-900 pl-2">{t('tryExample')}</p>
+        <p className="mb-2 text-base font-bold text-gray-900 pl-2">{t('tryExample')}</p>
         <div className="grid grid-cols-1 gap-2">
           {examplePrompts.map((example, index) => (
             <div 
@@ -252,9 +264,12 @@ export default function Home() {
               className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 bg-gray-50 transition-colors"
               onClick={() => setPrompt(example)}
             >
-              <div className="w-16 h-16 rounded-md flex-shrink-0 overflow-hidden">
+              <div 
+                className="w-16 h-16 rounded-md flex-shrink-0 overflow-hidden cursor-pointer relative"
+                onClick={(e) => handleExampleImageClick(e, exampleImages[index % exampleImages.length])}
+              >
                 <img
-                  src={exampleImages[index]}
+                  src={exampleImages[index % exampleImages.length]}
                   alt={example}
                   className="w-full h-full object-cover"
                 />
@@ -264,6 +279,32 @@ export default function Home() {
           ))}
         </div>
       </div>
+      
+      {/* 图片预览模态框 */}
+      {previewImage && (
+        <div 
+          className="fixed inset-0 bg-white/90 z-[100] flex items-center justify-center"
+          onClick={closeImagePreview}
+        >
+          <div 
+            className="relative max-w-[90vw] max-h-[90vh] p-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={closeImagePreview}
+              className="absolute top-2 right-2 bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-300 z-10"
+            >
+              <XMarkIcon className="w-6 h-6" />
+            </button>
+            
+            <img
+              src={previewImage}
+              alt="图片预览"
+              className="max-w-full max-h-[80vh] object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }

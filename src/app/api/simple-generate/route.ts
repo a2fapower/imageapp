@@ -74,7 +74,7 @@ export async function POST(request: Request) {
         
         // API调用失败，回退到模拟数据
         const shuffledImages = [...MOCK_IMAGES].sort(() => 0.5 - Math.random());
-        const imageUrls = shuffledImages.slice(0, 2);
+        const imageUrls = shuffledImages.slice(0, 1);
         const revisedPrompt = `${prompt} (API调用失败，使用模拟图像)`;
         
         return NextResponse.json({
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
       
       // 生成2张随机不重复的图片URL
       const shuffledImages = [...MOCK_IMAGES].sort(() => 0.5 - Math.random());
-      const imageUrls = shuffledImages.slice(0, 2);
+      const imageUrls = shuffledImages.slice(0, 1);
       
       // 构建修改后的提示词（模拟DALL-E的修改行为）
       const revisedPrompt = `${prompt} (高清, 专业级照片, 强烈的视觉效果)`;

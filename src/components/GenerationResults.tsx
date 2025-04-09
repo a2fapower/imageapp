@@ -112,66 +112,60 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
 
       <div className="flex flex-col h-[calc(100%-60px)] overflow-y-auto">
         <div className="p-4 pt-2 pb-0 max-w-md mx-auto w-full">
-          <div className="grid grid-cols-2 gap-3 w-full mb-4">
-            {imageUrls.map((url, index) => {
-              const reaction = imageReactions[url] || { liked: false, disliked: false };
-              return (
-                <div
-                  key={index}
-                  className="group aspect-square relative rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+          <div className="w-full mb-4">
+            <div
+              className="group aspect-square relative rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow w-full"
+            >
+              {/* 图片 */}
+              <div
+                className="absolute inset-0 cursor-pointer"
+                onClick={() => handleImageClick(imageUrls[0])}
+              >
+                <Image
+                  src={imageUrls[0]}
+                  alt={`${prompt}`}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              
+              {/* 底部操作栏 - 鼠标悬停时显示，向下移动 */}
+              <div className="absolute bottom-4 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                {/* 下载按钮 */}
+                <button 
+                  onClick={(e) => downloadImage(imageUrls[0], e)}
+                  className="text-white hover:text-gray-200 transition-colors bg-white/30 p-1.5 rounded-full backdrop-blur-sm"
+                  title={t('download') as string}
                 >
-                  {/* 图片 */}
-                  <div
-                    className="absolute inset-0 cursor-pointer"
-                    onClick={() => handleImageClick(url)}
-                  >
-                    <Image
-                      src={url}
-                      alt={`${prompt} - option ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                  </div>
-                  
-                  {/* 底部操作栏 - 鼠标悬停时显示，向下移动 */}
-                  <div className="absolute bottom-4 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    {/* 下载按钮 */}
-                    <button 
-                      onClick={(e) => downloadImage(url, e)}
-                      className="text-white hover:text-gray-200 transition-colors bg-white/30 p-1.5 rounded-full backdrop-blur-sm"
-                      title={t('download') as string}
-                    >
-                      <ArrowDownTrayIcon className="w-5 h-5" />
-                    </button>
-                    
-                    {/* 点赞按钮 */}
-                    <button 
-                      onClick={(e) => handleThumbsUp(url, e)}
-                      className={`transition-colors p-1.5 rounded-full backdrop-blur-sm ${reaction.liked ? 'text-green-500 bg-white/30' : 'text-white hover:text-gray-200 bg-white/30'}`}
-                      title={t('thumbsUp') as string}
-                    >
-                      {reaction.liked ? 
-                        <HandThumbUpSolidIcon className="w-5 h-5" /> : 
-                        <HandThumbUpIcon className="w-5 h-5" />
-                      }
-                    </button>
-                    
-                    {/* 差评按钮 */}
-                    <button 
-                      onClick={(e) => handleThumbsDown(url, e)}
-                      className={`transition-colors p-1.5 rounded-full backdrop-blur-sm ${reaction.disliked ? 'text-red-500 bg-white/30' : 'text-white hover:text-gray-200 bg-white/30'}`}
-                      title={t('thumbsDown') as string}
-                    >
-                      {reaction.disliked ? 
-                        <HandThumbDownSolidIcon className="w-5 h-5" /> : 
-                        <HandThumbDownIcon className="w-5 h-5" />
-                      }
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                  <ArrowDownTrayIcon className="w-5 h-5" />
+                </button>
+                
+                {/* 点赞按钮 */}
+                <button 
+                  onClick={(e) => handleThumbsUp(imageUrls[0], e)}
+                  className={`transition-colors p-1.5 rounded-full backdrop-blur-sm ${imageReactions[imageUrls[0]]?.liked ? 'text-green-500 bg-white/30' : 'text-white hover:text-gray-200 bg-white/30'}`}
+                  title={t('thumbsUp') as string}
+                >
+                  {imageReactions[imageUrls[0]]?.liked ? 
+                    <HandThumbUpSolidIcon className="w-5 h-5" /> : 
+                    <HandThumbUpIcon className="w-5 h-5" />
+                  }
+                </button>
+                
+                {/* 差评按钮 */}
+                <button 
+                  onClick={(e) => handleThumbsDown(imageUrls[0], e)}
+                  className={`transition-colors p-1.5 rounded-full backdrop-blur-sm ${imageReactions[imageUrls[0]]?.disliked ? 'text-red-500 bg-white/30' : 'text-white hover:text-gray-200 bg-white/30'}`}
+                  title={t('thumbsDown') as string}
+                >
+                  {imageReactions[imageUrls[0]]?.disliked ? 
+                    <HandThumbDownSolidIcon className="w-5 h-5" /> : 
+                    <HandThumbDownIcon className="w-5 h-5" />
+                  }
+                </button>
+              </div>
+            </div>
           </div>
           
           <div className="border-2 border-[#8B5CF6] rounded-lg p-4 mb-3 bg-white">
