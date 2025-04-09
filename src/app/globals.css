@@ -51,6 +51,45 @@ body {
   }
 }
 
+/* 深色主题样式 */
+.bg-slate-950 {
+  background-color: #0A1023;
+}
+
+.bg-slate-900 {
+  background-color: #111827;
+}
+
+.bg-slate-800 {
+  background-color: #1E293B;
+}
+
+.border-slate-800 {
+  border-color: #1E293B;
+}
+
+/* 确保生成页面的按钮渐变色更加明显 */
+.from-cyan-500 {
+  --tw-gradient-from: #06B6D4;
+}
+
+.to-purple-500 {
+  --tw-gradient-to: #8B5CF6;
+}
+
+/* 深色主题下的文本颜色调整 */
+.text-gray-300 {
+  color: #cbd5e1;
+}
+
+.text-gray-400 {
+  color: #94a3b8;
+}
+
+.text-gray-200 {
+  color: #e2e8f0;
+}
+
 .card {
   @apply bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300;
 }
@@ -77,4 +116,100 @@ body {
 
 .setting-button-inactive {
   @apply bg-white text-slate-700 hover:bg-gray-50 border border-gray-200;
+}
+
+/* 在桌面设备上等比例放大 */
+@media (min-width: 1024px) {
+  html {
+    font-size: 120%; /* 增加基础字体大小 */
+  }
+  
+  .max-w-md {
+    max-width: 36rem !important; /* 增加页面宽度，使用!important确保优先级 */
+  }
+  
+  /* 调整标题和语言选择器位置 */
+  .absolute.top-3.right-4 {
+    top: 1rem !important;
+    right: 1.5rem !important;
+  }
+  
+  .w-24 {
+    width: 7rem !important;
+  }
+  
+  .pt-12 {
+    padding-top: 4rem !important;
+  }
+  
+  .p-3\.5 {
+    padding: 1rem !important;
+  }
+  
+  .p-3 {
+    padding: 0.9rem !important;
+  }
+  
+  .p-4 {
+    padding: 1.2rem !important;
+  }
+  
+  .w-16, .h-16 {
+    width: 5rem !important;
+    height: 5rem !important;
+  }
+  
+  .min-h-\[110px\] {
+    min-height: 140px !important;
+  }
+  
+  .text-5xl {
+    font-size: 3.5rem !important;
+  }
+  
+  .py-3 {
+    padding-top: 0.9rem !important;
+    padding-bottom: 0.9rem !important;
+  }
+  
+  .mt-5, .mt-6 {
+    margin-top: 1.8rem !important;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .gap-2 {
+    gap: 0.6rem !important;
+  }
+  
+  .gap-4 {
+    gap: 1.2rem !important;
+  }
+  
+  /* 添加阴影加强视觉效果 */
+  .rounded-lg {
+    border-radius: 0.6rem !important;
+  }
+  
+  .shadow-sm {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06) !important;
+  }
+  
+  /* 确保生成的图像更大 */
+  [style*="aspectRatio"] {
+    aspect-ratio: attr(style);
+    min-height: 360px !important;
+  }
+  
+  /* 确保按钮更醒目 */
+  .bg-indigo-600 {
+    background-color: rgb(79, 70, 229) !important;
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2), 0 2px 4px -1px rgba(79, 70, 229, 0.1) !important;
+  }
+  
+  .hover\:bg-indigo-700:hover {
+    background-color: rgb(67, 56, 202) !important;
+  }
 }

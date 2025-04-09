@@ -11,15 +11,21 @@ import PromptSuggestions from '@/components/PromptSuggestions';
 import ImageActions from '@/components/ImageActions';
 import ImageHistory, { HistoryItem } from '@/components/ImageHistory';
 import { useTranslation } from '@/lib/i18n';
+import GenerationProgress from '@/components/GenerationProgress';
+import GenerationResults from '@/components/GenerationResults';
 
 export default function Home() {
   const { t, locale } = useTranslation();
   const [prompt, setPrompt] = useState('');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [revisedPrompt, setRevisedPrompt] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showProgress, setShowProgress] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [size, setSize] = useState<ImageSize>('1024x1024');
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [showEmptyError, setShowEmptyError] = useState(false);
 
   // Load history from localStorage
   useEffect(() => {
@@ -40,15 +46,17 @@ export default function Home() {
 
   const generateImage = async () => {
     if (!prompt) {
-      toast.error('Please enter a prompt');
+      // 显示自定义错误UI，不使用toast
+      setShowEmptyError(true);
+      // 3秒后自动隐藏错误提示
+      setTimeout(() => setShowEmptyError(false), 3000);
       return;
     }
 
     setLoading(true);
-    
-    // 添加加载提示，告知用户DALL-E需要时间
-    toast.loading(locale === 'zh' ? 'Kirami正在创作中，请耐心等待！' : 'Kirami is creating, please wait!', 
-      { duration: 30000 });
+    setShowProgress(true);
+    setShowResults(false);
+    setGeneratedImages([]);
     
     try {
       // 使用简单的API调用
@@ -70,28 +78,59 @@ export default function Home() {
         throw new Error(data.error);
       }
 
-      setImageUrl(data.imageUrl);
-      setRevisedPrompt(data.revisedPrompt || prompt);
-      
-      // Add to history
-      const newItem = {
-        id: uuidv4(),
-        prompt: prompt,
-        imageUrl: data.imageUrl,
-        timestamp: Date.now(),
-        size: size
-      };
-      
-      setHistory((prev) => [newItem, ...prev]);
-      toast.dismiss(); // 关闭加载提示
-      toast.success(locale === 'zh' ? '图像生成成功！' : 'Image generated successfully!');
+      if (data.imageUrls && data.imageUrls.length > 0) {
+        setGeneratedImages(data.imageUrls);
+        setRevisedPrompt(data.revisedPrompt || prompt);
+        setShowProgress(false);
+        setShowResults(true);
+      } else {
+        throw new Error('No images were generated');
+      }
     } catch (error) {
-      toast.dismiss(); // 关闭加载提示
       toast.error(error instanceof Error ? error.message : locale === 'zh' ? '生成图像失败' : 'Failed to generate image');
       console.error(error);
+      setShowProgress(false);
+      setShowResults(false);
     } finally {
       setLoading(false);
     }
+  };
+
+  // 取消图像生成
+  const handleCancelGeneration = () => {
+    // 在实际应用中，这里可能需要取消API请求
+    setLoading(false);
+    setShowProgress(false);
+    toast.error(locale === 'zh' ? '已取消图像生成' : 'Image generation cancelled');
+  };
+
+  // 用户选择了一张图片
+  const handleSelectImage = (selectedUrl: string) => {
+    // 不再设置imageUrl，这样就不会在首页显示
+    // setImageUrl(selectedUrl);
+    setShowResults(false);
+    
+    // Add to history
+    const newItem = {
+      id: uuidv4(),
+      prompt: prompt,
+      imageUrl: selectedUrl,
+      timestamp: Date.now(),
+      size: size
+    };
+    
+    setHistory((prev) => [newItem, ...prev]);
+    toast.success(locale === 'zh' ? '图像已保存到历史记录！' : 'Image saved to history!');
+  };
+
+  // 重新生成图像
+  const handleGenerateAgain = () => {
+    generateImage();
+  };
+
+  // 返回主界面
+  const handleGoBack = () => {
+    setShowResults(false);
   };
 
   // 示例提示词和提示词模板从翻译中获取
@@ -101,8 +140,11 @@ export default function Home() {
   // 使用本地图片路径
   const exampleImages = [
     "/examples/moon-cat.jpg",
-    "/examples/camel-astronaut.jpg",
-    "/examples/elephant-tv.jpg"
+    "/examples/mountain-lake-sunset.jpg",
+    "/examples/city-future.jpg",
+    "/examples/fantasy-forest.jpg",
+    "/examples/elephant-tv.jpg",
+    "/examples/camel-astronaut.jpg"
   ];
 
   return (
@@ -111,6 +153,21 @@ export default function Home() {
         <LanguageSelector />
       </div>
 
+      <GenerationProgress 
+        prompt={prompt}
+        onCancel={handleCancelGeneration}
+        isVisible={showProgress}
+      />
+      
+      <GenerationResults
+        prompt={prompt}
+        imageUrls={generatedImages}
+        onSelectImage={handleSelectImage}
+        onGenerateAgain={handleGenerateAgain}
+        onGoBack={handleGoBack}
+        isVisible={showResults}
+      />
+
       <div className="pt-12 mb-8 flex flex-col items-center">
         <h1 className="text-5xl font-bold gradient-text leading-tight text-center">Kirami</h1>
         <p className="text-xs text-gray-500 mt-1 text-center">{t('slogan')}</p>
@@ -118,12 +175,14 @@ export default function Home() {
       
       <div className="mb-4">
         <p className="mb-2 text-sm font-bold text-gray-900 pl-2">{t('startDescription')}</p>
-        <div className="border-2 border-[#8B5CF6] rounded-xl shadow-sm overflow-hidden">
+        <div className={`border-2 ${!prompt && showEmptyError ? 'border-red-400' : 'border-[#8B5CF6]'} rounded-xl shadow-sm overflow-hidden relative transition-colors duration-300`}>
           <textarea
-            className="w-full p-3.5 text-gray-700 text-base focus:outline-none min-h-[110px] resize-none"
+            className="w-full p-3.5 text-gray-700 text-base focus:outline-none min-h-[110px] resize-none peer transition-shadow hover:shadow-inner focus:shadow-inner"
             placeholder={t('promptPlaceholder') as string}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
+            // 当显示错误时，自动聚焦到输入框
+            autoFocus={showEmptyError}
           />
           
           <div className="flex gap-1 p-1.5 bg-gray-50">
@@ -162,32 +221,27 @@ export default function Home() {
         </div>
       </div>
       
-      <button
-        className="w-full py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
-        onClick={generateImage}
-        disabled={loading}
-      >
-        <span className="text-base font-bold">
-          {loading ? t('generatingButton') : t('generateButton')}
-        </span>
-      </button>
-      
-      {imageUrl && (
-        <div className="mt-5 border border-gray-200 rounded-lg overflow-hidden">
-          <div className="relative" style={{ 
-            aspectRatio: size === '1024x1024' ? '1/1' : size === '1024x1792' ? '9/16' : '16/9'
-          }}>
-            <Image
-              src={imageUrl}
-              alt={prompt}
-              fill
-              className="object-cover"
-              priority
-              unoptimized={imageUrl.startsWith('data:')}
-            />
+      <div className="relative">
+        <button
+          className="w-full py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+          onClick={generateImage}
+          disabled={loading}
+        >
+          <span className="text-base font-bold">
+            {loading ? t('generatingButton') : t('generateButton')}
+          </span>
+        </button>
+        
+        {/* 空提示错误提示 - 悬浮在按钮上方 */}
+        {showEmptyError && (
+          <div className="absolute -top-16 left-0 right-0 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg shadow-lg animate-bounce">
+            <div className="flex items-center">
+              <span className="text-xl mr-2">⚠️</span>
+              <span className="text-sm font-medium">{t('emptyPromptError')}</span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
       
       <div className="mt-6">
         <p className="mb-2 text-sm font-bold text-gray-900 pl-2">{t('tryExample')}</p>

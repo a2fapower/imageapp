@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
+// import OpenAI from 'openai';
 
 export const maxDuration = 60; // 设置最大执行时间为60秒
+
+// 模拟图像URL数组，用于测试
+const MOCK_IMAGES = [
+  '/examples/moon-cat.jpg',
+  '/examples/mountain-lake-sunset.jpg',
+];
 
 export async function POST(request: Request) {
   try {
@@ -11,59 +17,32 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "提示词是必需的" }, { status: 400 });
     }
     
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    console.log("模拟生成图像，提示词:", prompt, "尺寸:", size);
     
-    console.log("正在生成图像，提示词:", prompt, "尺寸:", size);
+    // 模拟API延迟，让用户体验进度页面
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
-    // DALL-E 3 仅支持 1024x1024, 1024x1792, 1792x1024 尺寸
-    // DALL-E 2 支持 256x256, 512x512, 1024x1024
+    // 随机选择两张不同的测试图像
+    const availableImages = [...MOCK_IMAGES];
+    const imageUrls = [];
     
-    // 确保尺寸兼容 DALL-E 3
-    let dalleSize: "1024x1024" | "1024x1792" | "1792x1024" = "1024x1024";
+    // 选择第一张图
+    const firstIndex = Math.floor(Math.random() * availableImages.length);
+    imageUrls.push(availableImages[firstIndex]);
+    availableImages.splice(firstIndex, 1);
     
-    if (size === "1024x1792" || size === "1792x1024") {
-      dalleSize = size as "1024x1792" | "1792x1024";
-    }
+    // 选择第二张图（确保与第一张不同）
+    const secondIndex = Math.floor(Math.random() * availableImages.length);
+    imageUrls.push(availableImages[secondIndex]);
     
-    const response = await openai.images.generate({
-      model: "dall-e-3", // 明确指定使用 DALL-E 3
-      prompt: prompt,
-      n: 1,
-      size: dalleSize,
-    });
+    // 构建修改后的提示词（模拟DALL-E的修改行为）
+    const revisedPrompt = `${prompt} (高清, 专业级照片, 强烈的视觉效果)`;
     
-    if (!response.data[0].url) {
-      throw new Error("未能获取图像URL");
-    }
-    
-    console.log("图像生成成功，URL:", response.data[0].url?.substring(0, 20) + "...");
-    
-    // 立即下载图像数据
-    const imageResponse = await fetch(response.data[0].url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
-    });
-    
-    if (!imageResponse.ok) {
-      throw new Error(`无法获取图像数据: ${imageResponse.status} ${imageResponse.statusText}`);
-    }
-    
-    // 获取图像数据为Buffer
-    const imageBuffer = await imageResponse.arrayBuffer();
-    
-    // 获取图像内容类型
-    const contentType = imageResponse.headers.get('content-type') || 'image/png';
-    
-    // 将图像数据转换为Base64
-    const base64Image = Buffer.from(imageBuffer).toString('base64');
-    const dataURL = `data:${contentType};base64,${base64Image}`;
+    console.log("模拟图像生成成功，使用样本图片:", imageUrls);
     
     return NextResponse.json({
-      imageUrl: dataURL,
-      revisedPrompt: response.data[0].revised_prompt,
+      imageUrls: imageUrls,
+      revisedPrompt: revisedPrompt,
     });
   } catch (error: any) {
     console.error("图像生成错误:", error.message);

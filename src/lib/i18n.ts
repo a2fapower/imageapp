@@ -30,6 +30,18 @@ export type TranslationType = {
   surpriseMe: string;
   chooseSize: string;
   tryExample: string;
+  generating: string;
+  cancel: string;
+  generateAgain: string;
+  goBack: string;
+  selectImage: string;
+  aiDisclaimer: string;
+  emptyPromptError: string;
+  promptGuidanceShort: string;
+  promptGuidanceGood: string;
+  characters: string;
+  thumbsUp: string;
+  thumbsDown: string;
   // 示例提示词
   examplePrompts: string[];
   // 随机提示词模板
@@ -64,11 +76,25 @@ export const translations: Record<Locale, TranslationType> = {
     surpriseMe: 'Surprise me',
     chooseSize: 'Choose size',
     tryExample: 'Try an example',
+    generating: 'Generating',
+    cancel: 'Cancel',
+    generateAgain: 'Generate again',
+    goBack: 'Go back',
+    selectImage: 'Select this image',
+    aiDisclaimer: "This technology is new and improving, please check its accuracy and report these images if they don't seem right.",
+    emptyPromptError: "Please enter a description first",
+    promptGuidanceShort: "More detailed descriptions create better results",
+    promptGuidanceGood: "Looks good!",
+    characters: "characters",
+    thumbsUp: "Like this image",
+    thumbsDown: "Dislike this image",
     // 示例提示词
     examplePrompts: [
       "A cat standing on the moon with humans beside it, Earth in the background, realistic style",
-      "An astronaut riding a camel in the desert, realistic photo",
-      "An elephant watching TV in a living room, realistic style"
+      "A beautiful sunset over a mountain lake with golden light, realistic photo",
+      "Future city panorama, skyscrapers towering into the sky, cyberpunk style",
+      "Fantasy forest scene, sunlight peaking through leaves, magical atmosphere",
+      "An elephant watching TV, home environment, surrealism photo"
     ],
     // 随机提示词模板
     promptTemplates: [
@@ -129,17 +155,31 @@ export const translations: Record<Locale, TranslationType> = {
     showSuggestions: '显示建议',
     hideSuggestions: '隐藏建议',
     moreSuggestions: '更多建议',
-    slogan: '让AI帮你10秒钟搞定专业级设计图',
+    slogan: 'AI帮你10秒钟搞定专业设计图',
     testimonial: '只需一句简单的提示词，即可创建精美图像',
     startDescription: '从详细描述开始',
     surpriseMe: '给我惊喜',
     chooseSize: '选择尺寸',
     tryExample: '尝试示例',
+    generating: '正在生成',
+    cancel: '取消',
+    generateAgain: '重新生成',
+    goBack: '返回',
+    selectImage: '选择此图像',
+    aiDisclaimer: "这项技术还在不断改进中，请检查其准确性，如果发现生成的图像有问题，请进行反馈。",
+    emptyPromptError: "请先输入描述内容",
+    promptGuidanceShort: "更详细的描述可以获得更好的结果",
+    promptGuidanceGood: "看起来不错！",
+    characters: "字符",
+    thumbsUp: "喜欢这张图片",
+    thumbsDown: "不喜欢这张图片",
     // 示例提示词
     examplePrompts: [
       "一只猫站在月球上，旁边还有几个人类，背景是地球，贴近现实",
-      "一个在沙漠中骑骆驼的太空人，真实的照片",
-      "一只大象在客厅看电视，贴近现实"
+      "日落时分的山间湖泊，金色阳光照耀，真实照片",
+      "未来城市的全景图，高耸入云的摩天大楼，赛博朋克风格",
+      "奇幻森林景色，阳光从树叶间穿透，充满魔法的氛围",
+      "一头大象看着电视，家居环境，超现实主义照片"
     ],
     // 随机提示词模板
     promptTemplates: [
