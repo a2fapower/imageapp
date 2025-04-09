@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     }
     
     // 解码URL（可能进行了多次编码）
-    let decodedUrl = decodeURIComponent(imageUrl);
+    const decodedUrl = decodeURIComponent(imageUrl);
     
     console.log('Proxying image:', decodedUrl.substring(0, 50) + '...');
     
