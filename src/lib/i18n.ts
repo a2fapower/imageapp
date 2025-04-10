@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 
 // 只支持英文和中文
@@ -42,6 +44,7 @@ export type TranslationType = {
   characters: string;
   thumbsUp: string;
   thumbsDown: string;
+  feedback: string;
   // 示例提示词
   examplePrompts: string[];
   // 随机提示词模板
@@ -88,6 +91,7 @@ export const translations: Record<Locale, TranslationType> = {
     characters: "characters",
     thumbsUp: "Like this image",
     thumbsDown: "Dislike this image",
+    feedback: "Feedback",
     // 示例提示词
     examplePrompts: [
       "A cat standing on the moon with humans beside it, Earth in the background, realistic style",
@@ -173,6 +177,7 @@ export const translations: Record<Locale, TranslationType> = {
     characters: "字符",
     thumbsUp: "喜欢这张图片",
     thumbsDown: "不喜欢这张图片",
+    feedback: "反馈",
     // 示例提示词
     examplePrompts: [
       "一只猫站在月球上，旁边还有几个人类，背景是地球，贴近现实",
