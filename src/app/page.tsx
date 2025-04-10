@@ -2,13 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
-import ThemeToggle from '@/components/ThemeToggle';
 import LanguageSelector from '@/components/LanguageSelector';
 import ImageSettings, { ImageSize } from '@/components/ImageSettings';
-import PromptSuggestions from '@/components/PromptSuggestions';
-import ImageActions from '@/components/ImageActions';
 import ImageHistory, { HistoryItem } from '@/components/ImageHistory';
 import { useTranslation } from '@/lib/i18n';
 import GenerationProgress from '@/components/GenerationProgress';
@@ -18,9 +14,7 @@ import { XMarkIcon } from '@heroicons/react/24/solid';
 export default function Home() {
   const { t, locale } = useTranslation();
   const [prompt, setPrompt] = useState('');
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
-  const [revisedPrompt, setRevisedPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [showProgress, setShowProgress] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -82,7 +76,6 @@ export default function Home() {
 
       if (data.imageUrls && data.imageUrls.length > 0) {
         setGeneratedImages(data.imageUrls);
-        setRevisedPrompt(data.revisedPrompt || prompt);
         setShowProgress(false);
         setShowResults(true);
       } else {
@@ -108,8 +101,7 @@ export default function Home() {
 
   // 用户选择了一张图片
   const handleSelectImage = (selectedUrl: string) => {
-    // 不再设置imageUrl，这样就不会在首页显示
-    // setImageUrl(selectedUrl);
+    // 清空生成结果，不再显示结果页面
     setShowResults(false);
     
     // Add to history
@@ -123,6 +115,9 @@ export default function Home() {
     
     setHistory((prev) => [newItem, ...prev]);
     toast.success(locale === 'zh' ? '图像已保存到历史记录！' : 'Image saved to history!');
+    
+    // 清空已生成的图片数组，防止后续再次点击再次生成按钮
+    setGeneratedImages([]);
   };
 
   // 重新生成图像
@@ -169,13 +164,13 @@ export default function Home() {
         prompt={prompt}
         onCancel={handleCancelGeneration}
         isVisible={showProgress}
+        size={size}
       />
       
       <GenerationResults
         prompt={prompt}
         imageUrls={generatedImages}
         onSelectImage={handleSelectImage}
-        onGenerateAgain={handleGenerateAgain}
         onGoBack={handleGoBack}
         isVisible={showResults}
       />

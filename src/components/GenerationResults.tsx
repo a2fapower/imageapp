@@ -16,7 +16,6 @@ interface GenerationResultsProps {
   prompt: string;
   imageUrls: string[];
   onSelectImage: (url: string) => void;
-  onGenerateAgain: () => void;
   onGoBack: () => void;
   isVisible: boolean;
 }
@@ -25,7 +24,6 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
   prompt,
   imageUrls,
   onSelectImage,
-  onGenerateAgain,
   onGoBack,
   isVisible,
 }) => {
@@ -37,6 +35,7 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
   if (!isVisible || imageUrls.length === 0) return null;
 
   const handleImageClick = (url: string) => {
+    // 恢复为查看大图功能
     setViewingImage(url);
   };
 
@@ -112,9 +111,13 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
 
       <div className="flex flex-col h-[calc(100%-60px)] overflow-y-auto">
         <div className="p-4 pt-2 pb-0 max-w-md mx-auto w-full">
-          <div className="w-full mb-4">
+          <div className="w-full mb-4 flex justify-center">
             <div
-              className="group aspect-square relative rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow w-full"
+              className={`group relative rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow ${
+                imageUrls[0].includes('size=1792x1024') ? 'aspect-[16/9] w-full' : 
+                imageUrls[0].includes('size=1024x1792') ? 'aspect-[9/16] w-[60%]' : 
+                'aspect-square w-full'
+              }`}
             >
               {/* 图片 */}
               <div
@@ -168,7 +171,7 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
             </div>
           </div>
           
-          <div className="border-2 border-[#8B5CF6] rounded-lg p-4 mb-3 bg-white">
+          <div className="border-2 border-[#8B5CF6] rounded-lg p-4 mb-3 bg-white max-w-md mx-auto w-full">
             <p className="text-gray-700">{prompt}</p>
           </div>
         </div>
@@ -176,19 +179,8 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
         <div className="px-4 pb-12 max-w-md mx-auto w-full">
           <div className="flex flex-col w-full space-y-4">
             <button
-              onClick={onGenerateAgain}
-              className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21.8883 13.5C21.1645 18.3113 17.013 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C16.1004 2 19.6254 4.46819 21.1291 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M17 8H21.4C21.7314 8 22 7.73137 22 7.4V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span className="font-bold">{t('generateAgain')}</span>
-            </button>
-
-            <button
               onClick={onGoBack}
-              className="w-full py-3.5 text-gray-700 font-bold rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+              className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-colors"
             >
               {t('goBack')}
             </button>
@@ -228,6 +220,21 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
             
             {/* 大图底部操作栏 - 鼠标悬停在图片区域时显示，向下移动 */}
             <div className="absolute bottom-8 right-4 flex bg-white/70 p-2 rounded-full gap-3 shadow-md backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              {/* 保存按钮 */}
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeImageView();
+                  onSelectImage(viewingImage);
+                }}
+                className="text-gray-700 hover:text-gray-900 bg-green-100 p-1.5 rounded-full"
+                title="Save"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </button>
+              
               {/* 查看大图时也根据状态显示对应的图标 */}
               {(() => {
                 const reaction = imageReactions[viewingImage] || { liked: false, disliked: false };

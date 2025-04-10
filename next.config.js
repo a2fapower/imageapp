@@ -5,6 +5,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   eslint: {
+    // 忽略构建过程中的ESLint错误，以便能够成功部署
     ignoreDuringBuilds: true,
   },
   images: {

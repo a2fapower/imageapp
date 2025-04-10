@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from '@/lib/i18n';
+import { ImageSize } from '@/components/ImageSettings';
 
 interface GenerationProgressProps {
   prompt: string;
   onCancel: () => void;
   isVisible: boolean;
+  size?: ImageSize;
 }
 
-const GenerationProgress: React.FC<GenerationProgressProps> = ({ prompt, onCancel, isVisible }) => {
+const GenerationProgress: React.FC<GenerationProgressProps> = ({ 
+  prompt, 
+  onCancel, 
+  isVisible,
+  size = '1024x1024'
+}) => {
   const { t } = useTranslation();
   const [progressWidth, setProgressWidth] = useState(10);
   
@@ -44,11 +51,17 @@ const GenerationProgress: React.FC<GenerationProgressProps> = ({ prompt, onCance
 
       <div className="flex flex-col h-[calc(100%-60px)] overflow-y-auto">
         <div className="p-4 pt-2 pb-0 max-w-md mx-auto w-full">
-          <div className="w-full mb-4">
-            <div className="aspect-square bg-gray-100 rounded-lg animate-pulse shadow-sm w-full"></div>
+          <div className="w-full mb-4 flex justify-center">
+            <div 
+              className={`bg-gray-100 rounded-lg animate-pulse shadow-sm ${
+                size === '1792x1024' ? 'aspect-[16/9] w-full' : 
+                size === '1024x1792' ? 'aspect-[9/16] w-[60%]' : 
+                'aspect-square w-full'
+              }`}
+            ></div>
           </div>
           
-          <div className="border-2 border-[#8B5CF6] rounded-lg p-4 mb-3 bg-white">
+          <div className="border-2 border-[#8B5CF6] rounded-lg p-4 mb-3 bg-white max-w-md mx-auto w-full">
             <p className="text-gray-700">{prompt}</p>
           </div>
         </div>

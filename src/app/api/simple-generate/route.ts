@@ -101,8 +101,13 @@ export async function POST(request: Request) {
       
       console.log("模拟图像生成成功，使用样本图片:", imageUrls);
       
+      // 添加尺寸信息到URL中，以便前端可以识别
+      const imageUrlsWithSize = imageUrls.map(url => 
+        url.includes('?') ? `${url}&size=${size}` : `${url}?size=${size}`
+      );
+      
       return NextResponse.json({
-        imageUrls: imageUrls,
+        imageUrls: imageUrlsWithSize,
         revisedPrompt: revisedPrompt,
       });
     }
