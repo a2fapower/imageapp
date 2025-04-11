@@ -31,6 +31,9 @@ const HeaderSection = ({ title, subtitle }: { title: string; subtitle: string })
   );
 };
 
+// 使用一个小体积的占位图像Base64编码
+const placeholderImageBase64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAQABADASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJVAAAH/2Q==";
+
 const HeroSection = ({ 
   imageSrc, 
   title, 
@@ -40,27 +43,29 @@ const HeroSection = ({
   title: string; 
   subtitle: string;
 }) => {
-  // Use useEffect to load the image on the client side only
+  // 添加图片加载状态管理
   const [imageLoaded, setImageLoaded] = useState(false);
   
   useEffect(() => {
-    setImageLoaded(true);
-  }, []);
+    // 预加载实际图片
+    const img = new Image();
+    img.src = imageSrc;
+    img.onload = () => setImageLoaded(true);
+  }, [imageSrc]);
 
   return (
     <div className="relative w-full max-w-md mx-auto rounded-xl overflow-hidden mb-8 shadow-lg">
       <div className="w-full h-[500px]">
-        {imageLoaded ? (
-          <img 
-            src={imageSrc} 
-            alt="Kirami Cover" 
-            className="w-full h-full object-cover bg-transparent"
-            loading="eager"
-            fetchPriority="high"
-          />
-        ) : (
-          <div className="w-full h-full bg-gray-200"></div>
-        )}
+        {/* 使用占位图，然后在实际图片加载完成后切换 */}
+        <div 
+          className="w-full h-full bg-cover bg-center"
+          style={{ 
+            backgroundImage: `url(${imageLoaded ? imageSrc : placeholderImageBase64})`,
+            backgroundSize: 'cover',
+            filter: !imageLoaded ? 'blur(5px)' : 'none',
+            transition: 'filter 0.3s ease-in-out'
+          }}
+        />
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col items-center justify-end px-4 pb-8">
         <h1 className="text-5xl font-bold gradient-text leading-tight text-center">{title}</h1>
@@ -282,7 +287,7 @@ export default function Home() {
 
       {/* 英雄区域 */}
       <HeroSection 
-        imageSrc="/images/blue-armor-optimized.webp"
+        imageSrc="/images/blue-armor.jpg"
         title="Kirami"
         subtitle={locale === 'zh' ? '帮你生成独特图像' : 'helps you generate unique images'}
       />

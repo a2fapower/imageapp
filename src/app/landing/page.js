@@ -3,6 +3,9 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
+// 小体积占位图Base64编码
+const placeholderImageBase64 = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAQABADASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJVAAAH/2Q==";
+
 // 定义文本内容
 const textContent = {
   zh: {
@@ -45,6 +48,7 @@ const textContent = {
 
 export default function LandingPage() {
   const [currentLang, setCurrentLang] = useState('zh');
+  const [imageLoaded, setImageLoaded] = useState(false);
   
   // 在客户端初始化时检查localStorage中的语言设置
   useEffect(() => {
@@ -52,6 +56,11 @@ export default function LandingPage() {
     if (savedLang === 'en' || savedLang === 'zh') {
       setCurrentLang(savedLang);
     }
+    
+    // 预加载图片
+    const img = new Image();
+    img.src = "/images/blue-armor.jpg";
+    img.onload = () => setImageLoaded(true);
   }, []);
   
   // 切换语言
@@ -88,12 +97,14 @@ export default function LandingPage() {
         </p>
         
         <div className="w-full max-w-[1000px] h-[600px] mx-auto my-10 rounded-xl overflow-hidden shadow-lg relative">
-          <img 
-            src="/images/blue-armor-optimized.webp" 
-            alt="Kirami AI艺术创作示例" 
-            className="w-full h-full object-cover"
-            loading="eager"
-            fetchPriority="high"
+          <div
+            className="w-full h-full bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${imageLoaded ? "/images/blue-armor.jpg" : placeholderImageBase64})`,
+              backgroundSize: 'cover',
+              filter: !imageLoaded ? 'blur(5px)' : 'none',
+              transition: 'filter 0.3s ease-in-out'
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/30 flex flex-col items-center justify-end px-4 pb-12">
             <h2 className="text-7xl font-bold gradient-text leading-tight text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">Kirami</h2>
