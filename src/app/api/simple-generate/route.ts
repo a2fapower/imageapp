@@ -64,8 +64,15 @@ export async function POST(request: Request) {
         
         console.log("OpenAI图像生成成功, 返回URL:", imageUrl?.substring(0, 30) + "...");
         
+        // 添加尺寸参数到图片URL中，以便前端可以正确识别
+        const imageUrlWithSize = imageUrl ? 
+          (imageUrl.includes('?') ? `${imageUrl}&size=${dalleSize}` : `${imageUrl}?size=${dalleSize}`) : 
+          imageUrl;
+        
+        console.log("添加尺寸信息后的URL:", imageUrlWithSize?.substring(0, 30) + "...");
+        
         return NextResponse.json({
-          imageUrls: [imageUrl],
+          imageUrls: [imageUrlWithSize],
           revisedPrompt: revisedPrompt,
         });
       } catch (apiError: any) {

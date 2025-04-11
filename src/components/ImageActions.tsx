@@ -16,7 +16,7 @@ const ImageActions: React.FC<ImageActionsProps> = ({ imageUrl, prompt, hideShare
 
   const downloadImage = async () => {
     try {
-      toast.loading('Downloading image...');
+      const toastId = toast.loading(t('downloadingImage').toString());
       
       if (imageUrl.startsWith('data:')) {
         // 如果已经是data URL，直接使用
@@ -29,10 +29,17 @@ const ImageActions: React.FC<ImageActionsProps> = ({ imageUrl, prompt, hideShare
         link.click();
         document.body.removeChild(link);
         
-        toast.dismiss();
-        toast.success('Image downloaded successfully');
+        toast.dismiss(toastId);
+        toast.success(t('downloadSuccess').toString());
       } else {
-        // 旧的URL形式，使用后端代理下载
+        // 对于OpenAI URL，使用后端代理下载
+        console.log('使用API下载图像URL:', imageUrl.substring(0, 50) + '...');
+        
+        // 先检查URL是否有效
+        if (!imageUrl.startsWith('http')) {
+          throw new Error('Invalid image URL');
+        }
+        
         const response = await fetch('/api/download', {
           method: 'POST',
           headers: {
@@ -42,11 +49,25 @@ const ImageActions: React.FC<ImageActionsProps> = ({ imageUrl, prompt, hideShare
         });
         
         if (!response.ok) {
-          throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+          const errorText = await response.text();
+          console.error('Download API error:', response.status, errorText);
+          throw new Error(`Download failed: ${response.status}`);
+        }
+        
+        // 检查响应类型
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          // 如果返回JSON，可能是错误
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Unknown error');
         }
         
         // 获取图像blob
         const blob = await response.blob();
+        
+        if (blob.size === 0) {
+          throw new Error('Received empty image data');
+        }
         
         // 创建一个blob URL
         const url = window.URL.createObjectURL(blob);
@@ -64,13 +85,22 @@ const ImageActions: React.FC<ImageActionsProps> = ({ imageUrl, prompt, hideShare
         // 释放blob URL
         window.URL.revokeObjectURL(url);
         
-        toast.dismiss();
-        toast.success('Image downloaded successfully');
+        toast.dismiss(toastId);
+        toast.success(t('downloadSuccess').toString());
       }
     } catch (error) {
       console.error('Error downloading image:', error);
       toast.dismiss();
-      toast.error('Failed to download image');
+      
+      // 针对常见错误提供更具体的消息
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      if (errorMessage.includes('Failed to fetch')) {
+        toast.error(t('downloadErrorExpired').toString());
+      } else if (errorMessage.includes('Network Error')) {
+        toast.error(t('downloadErrorNetwork').toString());
+      } else {
+        toast.error(`${t('downloadError').toString()}: ${errorMessage}`);
+      }
     }
   };
 

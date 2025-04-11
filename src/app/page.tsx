@@ -78,7 +78,7 @@ const HeroSection = ({
 };
 
 export default function Home() {
-  const { t, locale, changeLocale } = useTranslation();
+  const { t, locale, changeLocale, tArray } = useTranslation();
   const [prompt, setPrompt] = useState('');
   const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -99,9 +99,11 @@ export default function Home() {
     const savedHistory = localStorage.getItem('imageHistory');
     if (savedHistory) {
       try {
-        setHistory(JSON.parse(savedHistory));
+        const parsedHistory = JSON.parse(savedHistory);
+        console.log('加载历史记录:', parsedHistory.length, '条记录');
+        setHistory(parsedHistory);
       } catch (e) {
-        console.error('Failed to parse history:', e);
+        console.error('解析历史记录失败:', e);
       }
     }
   }, []);
@@ -135,8 +137,25 @@ export default function Home() {
 
   // Save history to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('imageHistory', JSON.stringify(history));
+    if (history.length > 0) {
+      console.log('保存历史记录:', history.length, '条记录');
+      localStorage.setItem('imageHistory', JSON.stringify(history));
+    }
   }, [history]);
+
+  // 从历史记录中选择项目
+  const handleSelectFromHistory = (item: HistoryItem) => {
+    setPrompt(item.prompt);
+    setSize(item.size as ImageSize);
+    toast.success(locale === 'zh' ? '已加载提示词' : 'Prompt loaded');
+  };
+
+  // 清空历史记录
+  const clearHistory = () => {
+    setHistory([]);
+    localStorage.removeItem('imageHistory');
+    toast.success(locale === 'zh' ? '历史记录已清空' : 'History cleared');
+  };
 
   // 图像生成函数
   const generateImage = async () => {
@@ -222,24 +241,23 @@ export default function Home() {
     toast.error(locale === 'zh' ? '已取消图像生成' : 'Image generation cancelled');
   };
 
-  // 用户选择了一张图片
+  // 选择图像并保存到历史记录
   const handleSelectImage = (selectedUrl: string) => {
-    // 清空生成结果，不再显示结果页面
-    setShowResults(false);
-    
-    // Add to history
-    const newItem = {
+    // 将选择的图像保存到历史记录中
+    const newItem: HistoryItem = {
       id: uuidv4(),
-      prompt: prompt,
+      prompt,
       imageUrl: selectedUrl,
       timestamp: Date.now(),
       size: size
     };
     
-    setHistory((prev) => [newItem, ...prev]);
+    // 添加到历史记录的最前端
+    setHistory(prev => [newItem, ...prev]);
     toast.success(locale === 'zh' ? '图像已保存到历史记录！' : 'Image saved to history!');
     
-    // 清空已生成的图片数组，防止后续再次点击再次生成按钮
+    // 关闭结果视图并清空生成的图像
+    setShowResults(false);
     setGeneratedImages([]);
   };
 
@@ -254,8 +272,8 @@ export default function Home() {
   };
 
   // 示例提示词和提示词模板从翻译中获取
-  const examplePrompts = t('examplePrompts') as string[];
-  const promptTemplates = t('promptTemplates') as string[];
+  const examplePrompts = tArray('examplePrompts');
+  const promptTemplates = tArray('promptTemplates');
 
   // 使用本地图片路径
   const exampleImages = [
@@ -357,7 +375,7 @@ export default function Home() {
               className="flex items-center justify-center w-24 h-10 bg-gray-300 text-black rounded-full cursor-pointer"
               onClick={() => {
                 // 从翻译文件中获取提示词模板数组
-                const promptTemplatesArray = t('promptTemplates') as string[];
+                const promptTemplatesArray = tArray('promptTemplates');
                 // 随机选择一个提示词
                 const randomIndex = Math.floor(Math.random() * promptTemplatesArray.length);
                 setPrompt(promptTemplatesArray[randomIndex]);
@@ -462,16 +480,8 @@ export default function Home() {
           <div className="mb-2 text-base font-bold text-gray-900 pl-2">{t('history')}</div>
           <ImageHistory 
             history={history} 
-            onSelect={(item) => {
-              setPrompt(item.prompt);
-              setSize(item.size as ImageSize);
-              toast.success(locale === 'zh' ? '已加载提示词' : 'Prompt loaded');
-            }}
-            onClear={() => {
-              setHistory([]);
-              localStorage.removeItem('imageHistory');
-              toast.success(locale === 'zh' ? '历史记录已清空' : 'History cleared');
-            }}
+            onSelect={handleSelectFromHistory}
+            onClear={clearHistory}
           />
           <div className="mt-4 text-center">
             <a href="/landing" className="text-sm text-indigo-600 hover:text-indigo-800">

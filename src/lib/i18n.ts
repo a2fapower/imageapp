@@ -47,6 +47,12 @@ export type TranslationType = {
   feedback: string;
   todayUsage: string;
   saveReminder: string;
+  // 下载相关翻译
+  downloadingImage: string;
+  downloadSuccess: string;
+  downloadError: string;
+  downloadErrorExpired: string;
+  downloadErrorNetwork: string;
   // 示例提示词
   examplePrompts: string[];
   // 随机提示词模板
@@ -96,6 +102,12 @@ export const translations: Record<Locale, TranslationType> = {
     feedback: "Feedback",
     todayUsage: "Today: {count} / 250 images used",
     saveReminder: "💬 Remember to save images after generation. Resources are limited, please use responsibly.",
+    // 下载相关翻译
+    downloadingImage: "Downloading image...",
+    downloadSuccess: "Image downloaded successfully",
+    downloadError: "Failed to download image",
+    downloadErrorExpired: "Image URL may have expired. Try regenerating the image.",
+    downloadErrorNetwork: "Network error. Please check your connection.",
     // 示例提示词
     examplePrompts: [
       "A cat standing on the moon with humans beside it, Earth in the background, realistic style",
@@ -199,6 +211,12 @@ export const translations: Record<Locale, TranslationType> = {
     feedback: "反馈",
     todayUsage: "今日：已用 {count} / 250 张图片",
     saveReminder: "💬 图像生成后记得保存，资源有限，请节约使用～",
+    // 下载相关翻译
+    downloadingImage: "正在下载图像...",
+    downloadSuccess: "图像下载成功",
+    downloadError: "下载图像失败",
+    downloadErrorExpired: "图像链接可能已过期，请尝试重新生成图像。",
+    downloadErrorNetwork: "网络错误，请检查您的连接。",
     // 示例提示词
     examplePrompts: [
       "一只猫站在月球上，旁边还有几个人类，背景是地球，贴近现实",
@@ -294,9 +312,27 @@ export const useTranslation = () => {
     window.location.reload();
   };
 
-  const t = (key: keyof TranslationType): string | string[] => {
-    return translations[locale][key] || translations.en[key];
+  // 修改t函数确保返回正确的类型
+  const t = (key: keyof TranslationType): string => {
+    const value = translations[locale][key] || translations.en[key];
+    // 确保返回字符串类型，如果是数组则返回第一个元素或空字符串
+    if (Array.isArray(value)) {
+      return value[0] || '';
+    }
+    return value as string;
   };
 
-  return { t, locale, changeLocale, supportedLocales: Object.keys(translations) as Locale[] };
+  // 添加特殊函数来获取字符串数组（如提示词列表）
+  const tArray = (key: 'examplePrompts' | 'promptTemplates'): string[] => {
+    const value = translations[locale][key] || translations.en[key];
+    return value as string[];
+  };
+
+  return { 
+    t, 
+    tArray,
+    locale, 
+    changeLocale, 
+    supportedLocales: Object.keys(translations) as Locale[] 
+  };
 }; 
