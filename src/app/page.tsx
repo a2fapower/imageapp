@@ -278,8 +278,20 @@ export default function Home() {
       size: size
     };
     
-    // 添加到历史记录的最前端
-    setHistory(prev => [newItem, ...prev]);
+    // 同步更新历史记录：使用函数形式而不是异步setState回调
+    const updatedHistory = [newItem, ...history];
+    
+    // 立即更新状态
+    setHistory(updatedHistory);
+    
+    // 直接同步写入localStorage，而不是依赖useEffect
+    try {
+      localStorage.setItem('imageHistory', JSON.stringify(updatedHistory));
+      console.log('历史记录已同步保存到localStorage:', updatedHistory.length, '条记录');
+    } catch (err) {
+      console.error('保存历史记录到localStorage失败:', err);
+    }
+    
     toast.success(locale === 'zh' ? '图像已保存到历史记录！' : 'Image saved to history!');
     
     // 关闭结果视图并清空生成的图像
@@ -481,20 +493,22 @@ export default function Home() {
           {examplePrompts.map((example, index) => (
             <div 
               key={index}
-              className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 bg-gray-50 transition-colors"
+              className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 bg-gray-50 transition-colors"
               onClick={() => setPrompt(example)}
             >
-              <div 
-                className="w-16 h-16 rounded-md flex-shrink-0 overflow-hidden cursor-pointer relative"
-                onClick={(e) => handleExampleImageClick(e, exampleImages[index % exampleImages.length])}
-              >
-                <img
-                  src={exampleImages[index % exampleImages.length]}
-                  alt={example}
-                  className="w-full h-full object-cover"
-                />
+              <div className="flex gap-4 items-center w-full">
+                <div 
+                  className="w-16 h-16 rounded-md flex-shrink-0 overflow-hidden cursor-pointer relative"
+                  onClick={(e) => handleExampleImageClick(e, exampleImages[index % exampleImages.length])}
+                >
+                  <img
+                    src={exampleImages[index % exampleImages.length]}
+                    alt={example}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <p className="text-sm text-gray-700 flex-grow">{example}</p>
               </div>
-              <p className="text-sm text-gray-700">{example}</p>
             </div>
           ))}
         </div>
@@ -524,21 +538,23 @@ export default function Home() {
           onClick={closeImagePreview}
         >
           <div 
-            className="relative max-w-[90vw] max-h-[90vh] p-2"
+            className="relative p-4 flex items-center justify-center max-w-4xl w-full h-full"
             onClick={(e) => e.stopPropagation()}
           >
             <button 
               onClick={closeImagePreview}
-              className="absolute top-2 right-2 bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-300 z-10"
+              className="absolute top-4 right-4 bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-300 z-10"
             >
               <XMarkIcon className="w-6 h-6" />
             </button>
             
-            <img
-              src={previewImage}
-              alt="图片预览"
-              className="max-w-full max-h-[80vh] object-contain rounded-lg"
-            />
+            <div className="max-w-full max-h-[75vh] flex items-center justify-center">
+              <img
+                src={previewImage}
+                alt="图片预览"
+                className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-lg"
+              />
+            </div>
           </div>
         </div>
       )}
