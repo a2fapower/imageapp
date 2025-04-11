@@ -133,6 +133,13 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
                 />
               </div>
               
+              {/* 比例指示器 - 显示在左上角 */}
+              <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+                {imageUrls[0].includes('size=1792x1024') ? '16:9' : 
+                 imageUrls[0].includes('size=1024x1792') ? '9:16' : 
+                 '1:1'}
+              </div>
+              
               {/* 底部操作栏 - 鼠标悬停时显示，向下移动 */}
               <div className="absolute bottom-4 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 {/* 下载按钮 */}
@@ -210,7 +217,11 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
           onClick={closeImageView}
         >
           <div 
-            className="relative max-w-[90vw] max-h-[90vh] p-2 group"
+            className={`relative max-w-[90vw] max-h-[90vh] p-2 group ${
+              viewingImage.includes('size=1792x1024') ? 'aspect-[16/9] w-[90vw]' : 
+              viewingImage.includes('size=1024x1792') ? 'aspect-[9/16] w-[60vw]' : 
+              'w-[90vw]'
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <button 
@@ -220,10 +231,17 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
               <XMarkIcon className="w-6 h-6" />
             </button>
             
+            {/* 比例指示器 - 显示在左上角 */}
+            <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+              {viewingImage.includes('size=1792x1024') ? '16:9' : 
+               viewingImage.includes('size=1024x1792') ? '9:16' : 
+               '1:1'}
+            </div>
+            
             <img
               src={viewingImage}
               alt={prompt}
-              className="max-w-full max-h-[80vh] object-contain rounded-lg"
+              className="w-full h-full object-contain rounded-lg"
             />
             
             {/* 大图底部操作栏 - 鼠标悬停在图片区域时显示，向下移动 */}

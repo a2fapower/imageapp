@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     console.log("API密钥状态:", apiKey ? "已设置" : "未设置");
     
     // 如果有API密钥，调用真实的OpenAI API
-    if (apiKey && apiKey !== "your_openai_api_key_here") {
+    if (apiKey && apiKey !== "your_openai_api_key_here" && !apiKey.includes("your_api")) {
       console.log("正在调用OpenAI API生成图像，提示词:", prompt);
       
       try {
@@ -105,6 +105,8 @@ export async function POST(request: Request) {
       const imageUrlsWithSize = imageUrls.map(url => 
         url.includes('?') ? `${url}&size=${size}` : `${url}?size=${size}`
       );
+      
+      console.log("添加尺寸信息后的URL:", imageUrlsWithSize);
       
       return NextResponse.json({
         imageUrls: imageUrlsWithSize,

@@ -44,7 +44,7 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ history, onSelect, onClear 
         <button 
           onClick={onClear}
           className="text-xs flex items-center gap-1 text-red-500 hover:text-red-600 hover:scale-105 transition-all duration-200"
-          aria-label={t('clearAll')}
+          aria-label="Clear all"
         >
           <TrashIcon className="h-4 w-4" />
           <span>{t('clearAll')}</span>
@@ -57,7 +57,11 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ history, onSelect, onClear 
             className="card cursor-pointer group hover:scale-105 hover:shadow-xl transition-all duration-300"
             onClick={() => onSelect(item)}
           >
-            <div className="relative aspect-square">
+            <div className={`relative ${
+              item.size === '1792x1024' ? 'aspect-[16/9]' : 
+              item.size === '1024x1792' ? 'aspect-[9/16]' : 
+              'aspect-square'
+            }`}>
               <Image
                 src={item.imageUrl}
                 alt={item.prompt}

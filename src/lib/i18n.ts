@@ -276,9 +276,10 @@ export const useTranslation = () => {
     const savedLocale = localStorage.getItem('locale') as Locale;
     
     const supportedLocales = Object.keys(translations) as Locale[];
+    // 修改默认语言逻辑，始终使用英文作为默认语言，除非用户明确保存了其他语言设置
     const defaultLocale = savedLocale && supportedLocales.includes(savedLocale) 
       ? savedLocale 
-      : (browserLocale === 'zh' ? 'zh' : 'en');
+      : 'en';  // 默认使用英文
     
     globalLocale = defaultLocale;
     setLocale(defaultLocale);

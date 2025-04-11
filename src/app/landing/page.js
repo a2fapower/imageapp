@@ -47,7 +47,7 @@ const textContent = {
 };
 
 export default function LandingPage() {
-  const [currentLang, setCurrentLang] = useState('zh');
+  const [currentLang, setCurrentLang] = useState('en');
   const [imageLoaded, setImageLoaded] = useState(false);
   
   // 在客户端初始化时检查localStorage中的语言设置
