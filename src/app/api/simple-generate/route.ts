@@ -72,15 +72,31 @@ export async function POST(request: Request) {
         console.error("OpenAI API错误:", apiError.message, apiError.stack);
         console.log("回退到模拟图像...");
         
+        // 特别处理账单限额错误
+        let errorMessage = apiError.message || "OpenAI API调用失败";
+        let isBillingError = false;
+        
+        if (apiError.message && apiError.message.includes('Billing hard limit')) {
+          errorMessage = "OpenAI API已达到账单限额，暂时无法生成图像";
+          isBillingError = true;
+          console.log("检测到账单限额错误，使用模拟数据");
+        }
+        
         // API调用失败，回退到模拟数据
         const shuffledImages = [...MOCK_IMAGES].sort(() => 0.5 - Math.random());
         const imageUrls = shuffledImages.slice(0, 1);
-        const revisedPrompt = `${prompt} (API调用失败，使用模拟图像)`;
+        const revisedPrompt = `${prompt} (${isBillingError ? '账单限额已达到' : 'API调用失败'}，使用模拟图像)`;
+        
+        // 添加尺寸信息到URL中
+        const imageUrlsWithSize = imageUrls.map(url => 
+          url.includes('?') ? `${url}&size=${size}` : `${url}?size=${size}`
+        );
         
         return NextResponse.json({
-          imageUrls: imageUrls,
+          imageUrls: imageUrlsWithSize,
           revisedPrompt: revisedPrompt,
-          error: apiError.message
+          error: errorMessage,
+          billingError: isBillingError
         });
       }
     } 

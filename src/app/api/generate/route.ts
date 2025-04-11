@@ -54,6 +54,18 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Error generating image:', error);
     
+    // 特别处理账单限额错误
+    if (error.message && error.message.includes('Billing hard limit')) {
+      return NextResponse.json(
+        { 
+          error: "OpenAI API billing limit reached. Please try again later.",
+          code: 429,
+          billingError: true
+        },
+        { status: 429 }
+      );
+    }
+    
     // 改进错误处理，确保返回有效的JSON
     return NextResponse.json(
       { 

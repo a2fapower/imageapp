@@ -170,7 +170,22 @@ export default function Home() {
 
       const data = await response.json();
       if (data.error) {
-        throw new Error(data.error);
+        // 特别处理账单限额错误
+        if (data.billingError) {
+          toast.error(locale === 'zh' ? 
+            'OpenAI API已达到账单限额，暂时无法生成真实图像，将使用模拟数据。' : 
+            'OpenAI API billing limit reached, using mock data instead.'
+          );
+          // 如果API返回了模拟图像，继续使用
+          if (data.imageUrls && data.imageUrls.length > 0) {
+            setGeneratedImages(data.imageUrls);
+            setShowProgress(false);
+            setShowResults(true);
+            return;
+          }
+        } else {
+          throw new Error(data.error);
+        }
       }
 
       if (data.imageUrls && data.imageUrls.length > 0) {
