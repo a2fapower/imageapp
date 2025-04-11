@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// 初始化OpenAI客户端
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  timeout: 60000, // 添加60秒超时设置
-});
+// 模拟图像数据
+const MOCK_IMAGES = [
+  '/examples/moon-cat.jpg',
+  '/examples/mountain-lake-sunset.jpg',
+  '/examples/city-future.jpg',
+  '/examples/fantasy-forest.jpg',
+  '/examples/elephant-tv.jpg',
+];
 
 export async function POST(request: Request) {
   try {
@@ -15,40 +18,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
     }
     
-    // 检查API密钥是否配置
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json(
-        { error: "OpenAI API key is not configured" },
-        { status: 500 }
-      );
-    }
+    console.log("使用模拟数据（API调用已禁用）");
+    console.log("模拟生成图像，提示词:", prompt);
     
-    // 根据选择的尺寸设置DALL-E参数
-    let dalleSize;
-    switch (size) {
-      case '1024x1024':
-        dalleSize = '1024x1024';
-        break;
-      case '1024x1792':
-        dalleSize = '1024x1792';
-        break;
-      case '1792x1024':
-        dalleSize = '1792x1024';
-        break;
-      default:
-        dalleSize = '1024x1024';
-    }
+    // 模拟API延迟
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // 调用OpenAI API生成图像
-    const response = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: prompt,
-      n: 1,
-      size: dalleSize as "1024x1024" | "1024x1792" | "1792x1024",
-    });
+    // 随机选择一张图片
+    const randomIndex = Math.floor(Math.random() * MOCK_IMAGES.length);
+    const imageUrl = MOCK_IMAGES[randomIndex];
     
-    const imageUrl = response.data[0].url;
-    const revisedPrompt = response.data[0].revised_prompt;
+    // 构建修改后的提示词
+    const revisedPrompt = `${prompt} (高清, 专业级照片, 强烈的视觉效果)`;
     
     return NextResponse.json({ imageUrl, revisedPrompt });
   } catch (error: any) {
