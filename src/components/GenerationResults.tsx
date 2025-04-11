@@ -27,7 +27,7 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
   onGoBack,
   isVisible,
 }) => {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [viewingImage, setViewingImage] = useState<string | null>(null);
   // 添加状态来跟踪每张图片的点赞/差评状态
   const [imageReactions, setImageReactions] = useState<Record<string, { liked: boolean, disliked: boolean }>>({});
@@ -184,6 +184,14 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
             >
               {t('goBack')}
             </button>
+            
+            {/* 保存提醒 */}
+            <p className="text-sm text-gray-500 text-center mt-1">
+              {locale === 'zh' ? 
+                <>💬 图像生成后记得保存，资源有限，请节约使用～</> : 
+                <>💬 Remember to save images after generation. Resources are limited, please use responsibly.</>
+              }
+            </p>
             
             <div className="flex items-center gap-2 py-2 px-4 rounded-md bg-gray-100 border border-gray-200 shadow-sm">
               <FlagIcon className="w-5 h-5 text-gray-500 flex-shrink-0" />

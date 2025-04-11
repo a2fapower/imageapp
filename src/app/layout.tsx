@@ -36,6 +36,12 @@ export default function RootLayout({
             `,
           }}
         ></script>
+        {/* Plausible Analytics */}
+        <script 
+          defer 
+          data-domain="kirami.vercel.app" 
+          src="https://plausible.io/js/script.file-downloads.outbound-links.js"
+        ></script>
       </head>
       <body className={inter.className}>
         {children}

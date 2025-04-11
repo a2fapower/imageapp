@@ -45,6 +45,8 @@ export type TranslationType = {
   thumbsUp: string;
   thumbsDown: string;
   feedback: string;
+  todayUsage: string;
+  saveReminder: string;
   // 示例提示词
   examplePrompts: string[];
   // 随机提示词模板
@@ -92,6 +94,8 @@ export const translations: Record<Locale, TranslationType> = {
     thumbsUp: "Like this image",
     thumbsDown: "Dislike this image",
     feedback: "Feedback",
+    todayUsage: "Today: {count} / 250 images used",
+    saveReminder: "💬 Remember to save images after generation. Resources are limited, please use responsibly.",
     // 示例提示词
     examplePrompts: [
       "A cat standing on the moon with humans beside it, Earth in the background, realistic style",
@@ -136,7 +140,22 @@ export const translations: Record<Locale, TranslationType> = {
       "A bridge connecting two completely different worlds: medieval castle on one side, futuristic city on the other, fantasy concept art",
       "A magic mirror that sees all possible futures, surrounded by mysterious runes, fantasy illustration",
       "An underwater city made of coral and marine life with fish as residents, ocean fantasy",
-      "Stunning northern lights with glowing reindeer running in the snow, magical winter scene"
+      "Stunning northern lights with glowing reindeer running in the snow, magical winter scene",
+      "A beautiful geisha with cherry blossoms falling around her in an ancient Japanese garden, anime style",
+      "A mighty dragon perched on a castle tower with a knight approaching, fantasy digital painting",
+      "A stunning portrait of a woman with galaxy and stars as her hair, cosmic fantasy",
+      "A samurai standing in a bamboo forest during sunset, foggy atmosphere, dramatic lighting",
+      "A futuristic neon-lit street market in Tokyo at night with flying cars, cyberpunk style",
+      "An ancient scholar's desk with scrolls, candles, and magical artifacts, detailed illustration",
+      "A tree of life with branches reaching to the cosmos and roots connecting to underwater worlds",
+      "A Chinese ink painting style landscape with misty mountains and a small boat on a river",
+      "A divine being descending from the heavens with light radiating, renaissance style",
+      "A realistic portrait of a lion with a majestic galaxy mane, cosmic nature",
+      "A fantasy mushroom forest with glowing plants and tiny magical creatures, vibrant colors",
+      "A steampunk airship fleet sailing through clouds, detailed mechanical design",
+      "A tranquil zen garden with perfect rake patterns in sand, minimalist Japanese style",
+      "A door opening between dimensions showing beautiful cosmic phenomena, surrealism",
+      "An ancient Egyptian temple with mysterious light beams and hieroglyphics, archaeological style"
     ]
   },
   zh: {
@@ -178,6 +197,8 @@ export const translations: Record<Locale, TranslationType> = {
     thumbsUp: "喜欢这张图片",
     thumbsDown: "不喜欢这张图片",
     feedback: "反馈",
+    todayUsage: "今日：已用 {count} / 250 张图片",
+    saveReminder: "💬 图像生成后记得保存，资源有限，请节约使用～",
     // 示例提示词
     examplePrompts: [
       "一只猫站在月球上，旁边还有几个人类，背景是地球，贴近现实",
@@ -222,7 +243,22 @@ export const translations: Record<Locale, TranslationType> = {
       "一座桥梁连接两个截然不同的世界：一边是中世纪城堡，另一边是未来都市，幻想概念艺术",
       "一个能看到所有可能未来的魔法镜子，周围环绕着神秘符文，奇幻插画",
       "一个由珊瑚和海洋生物组成的水下城市，鱼类作为居民，海洋幻想",
-      "绚丽的北极光下，一群发光的驯鹿在雪地上奔跑，魔幻冬季场景"
+      "绚丽的北极光下，一群发光的驯鹿在雪地上奔跑，魔幻冬季场景",
+      "一位美丽的艺妓站在古代日本花园中，樱花飘落在她周围，动漫风格",
+      "一条强大的龙栖息在城堡塔楼上，一位骑士正在接近，奇幻数字绘画",
+      "一幅令人惊叹的女性肖像，她的头发是星系和星星组成的，宇宙幻想",
+      "一位武士站在日落时分的竹林中，雾气环绕，戏剧性的光影效果",
+      "未来东京夜晚霓虹灯照亮的街头市场，有飞行汽车，赛博朋克风格",
+      "古代学者的书桌，上面有卷轴、蜡烛和魔法神器，细节丰富的插画",
+      "生命之树，树枝延伸至宇宙，根部连接水下世界",
+      "中国水墨画风格的风景，有云雾缭绕的山脉和河上的小船",
+      "一位神圣的存在从天堂降临，光芒四射，文艺复兴风格",
+      "一幅写实的狮子肖像，有壮丽的星系鬃毛，宇宙自然",
+      "一片幻想蘑菇森林，有发光的植物和微小的魔法生物，色彩鲜艳",
+      "蒸汽朋克风格的飞艇舰队在云中航行，精细的机械设计",
+      "宁静的禅宗花园，沙地上有完美的耙痕图案，极简主义日本风格",
+      "一扇连接不同维度的门，展示着美丽的宇宙现象，超现实主义",
+      "一座古埃及神庙，有神秘的光束和象形文字，考古风格"
     ]
   }
 };
