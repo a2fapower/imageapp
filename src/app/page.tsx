@@ -212,6 +212,9 @@ export default function Home() {
             setGeneratedImages(data.imageUrls);
             setShowProgress(false);
             setShowResults(true);
+            
+            // 自动保存第一张模拟图片到历史记录
+            saveImageToHistory(data.imageUrls[0]);
             return;
           }
         } else {
@@ -223,6 +226,9 @@ export default function Home() {
         setGeneratedImages(data.imageUrls);
         setShowProgress(false);
         setShowResults(true);
+        
+        // 自动保存第一张生成的图片到历史记录
+        saveImageToHistory(data.imageUrls[0]);
       } else {
         throw new Error('No images were generated');
       }
@@ -233,6 +239,46 @@ export default function Home() {
       setShowResults(false);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 辅助函数：保存图片到历史记录
+  const saveImageToHistory = (imageUrl: string) => {
+    // 确保图片URL能够被持久化访问
+    let imageUrlToSave = imageUrl;
+    
+    // 如果是OpenAI的URL，确保包含尺寸信息
+    if (imageUrl.startsWith('https://oaidalleapiprodscus.blob.core.windows.net') ||
+        imageUrl.includes('openai.com')) {
+      // 通过查询参数确保尺寸信息被保留
+      if (!imageUrl.includes('size=')) {
+        imageUrlToSave = imageUrl + (imageUrl.includes('?') ? '&' : '?') + `size=${size}`;
+      }
+    }
+    
+    console.log('自动保存图片到历史记录:', imageUrlToSave);
+    
+    // 将选择的图像保存到历史记录中
+    const newItem: HistoryItem = {
+      id: uuidv4(),
+      prompt,
+      imageUrl: imageUrlToSave,
+      timestamp: Date.now(),
+      size: size
+    };
+    
+    // 同步更新历史记录：使用函数形式而不是异步setState回调
+    const updatedHistory = [newItem, ...history];
+    
+    // 立即更新状态
+    setHistory(updatedHistory);
+    
+    // 直接同步写入localStorage，而不是依赖useEffect
+    try {
+      localStorage.setItem('imageHistory', JSON.stringify(updatedHistory));
+      console.log('历史记录已同步保存到localStorage:', updatedHistory.length, '条记录');
+    } catch (err) {
+      console.error('保存历史记录到localStorage失败:', err);
     }
   };
 
