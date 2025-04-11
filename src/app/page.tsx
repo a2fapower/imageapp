@@ -458,11 +458,22 @@ export default function Home() {
             <div 
               className="flex items-center justify-center w-24 h-10 bg-gray-300 text-black rounded-full cursor-pointer"
               onClick={() => {
-                // 从翻译文件中获取提示词模板数组
-                const promptTemplatesArray = tArray('promptTemplates');
-                // 随机选择一个提示词
-                const randomIndex = Math.floor(Math.random() * promptTemplatesArray.length);
-                setPrompt(promptTemplatesArray[randomIndex]);
+                // 导入自定义提示词集合
+                import('@/data/prompts').then(({ getNewPrompts, getAllPrompts }) => {
+                  // 使用新的提示词集合
+                  const allPrompts = getAllPrompts();
+                  // 根据当前语言选择对应的提示词数组
+                  const promptsArray = locale === 'zh' ? allPrompts.zh : allPrompts.en;
+                  // 随机选择一个提示词
+                  const randomIndex = Math.floor(Math.random() * promptsArray.length);
+                  setPrompt(promptsArray[randomIndex]);
+                }).catch(error => {
+                  console.error('无法加载自定义提示词:', error);
+                  // 如果加载失败，使用原有逻辑作为后备
+                  const promptTemplatesArray = tArray('promptTemplates');
+                  const randomIndex = Math.floor(Math.random() * promptTemplatesArray.length);
+                  setPrompt(promptTemplatesArray[randomIndex]);
+                });
               }}
             >
               <span className="text-sm">{t('surpriseMe')}</span>

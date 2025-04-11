@@ -206,8 +206,8 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
           <div className="w-full mb-4 flex justify-center">
             {/* 主图片容器 */}
             <div
-              className="relative border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-lg overflow-hidden"
-              style={{ width: mainImageRatio === '9:16' ? '60%' : '100%', maxWidth: 'min(100%, 500px)' }}
+              className="relative border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-lg overflow-hidden w-full"
+              style={{ maxWidth: 'min(100%, 500px)' }}
             >
               {/* 根据比例包装图片 */}
               <div
@@ -217,18 +217,61 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
                   'aspect-square'
                 }`}
                 data-ratio={mainImageRatio}
+                style={{ width: '100%', height: '100%', position: 'relative' }}
               >
+                {/* 比例指示器 - 显示在图片上的左上角 */}
+                <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm z-30">
+                  {mainImageRatio}
+                </div>
+                
+                {/* 底部操作栏 - 显示在图片上的右下角 */}
+                <div className="absolute bottom-4 right-4 flex gap-2 bg-white/70 p-2 rounded-full shadow-md backdrop-blur-sm z-30">
+                  {/* 下载按钮 */}
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); downloadImage(imageUrls[0], e); }}
+                    className="text-gray-700 hover:text-gray-900 transition-colors p-1.5 rounded-full"
+                    title={t('download')}
+                  >
+                    <ArrowDownTrayIcon className="w-5 h-5" />
+                  </button>
+                  
+                  {/* 点赞按钮 */}
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handleThumbsUp(imageUrls[0], e); }}
+                    className={`transition-colors p-1.5 rounded-full ${imageReactions[imageUrls[0]]?.liked ? 'text-green-500' : 'text-gray-700 hover:text-gray-900'}`}
+                    title={t('thumbsUp')}
+                  >
+                    {imageReactions[imageUrls[0]]?.liked ? 
+                      <HandThumbUpSolidIcon className="w-5 h-5" /> : 
+                      <HandThumbUpIcon className="w-5 h-5" />
+                    }
+                  </button>
+                  
+                  {/* 差评按钮 */}
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handleThumbsDown(imageUrls[0], e); }}
+                    className={`transition-colors p-1.5 rounded-full ${imageReactions[imageUrls[0]]?.disliked ? 'text-red-500' : 'text-gray-700 hover:text-gray-900'}`}
+                    title={t('thumbsDown')}
+                  >
+                    {imageReactions[imageUrls[0]]?.disliked ? 
+                      <HandThumbDownSolidIcon className="w-5 h-5" /> : 
+                      <HandThumbDownIcon className="w-5 h-5" />
+                    }
+                  </button>
+                </div>
+                
                 {/* 图片 */}
                 <div
                   className="absolute inset-0 cursor-pointer"
                   onClick={() => handleImageClick(imageUrls[0])}
+                  style={{ zIndex: 20 }}
                 >
                   {imageUrls[0] ? (
                     <div className="relative w-full h-full">
                       <img
                         src={imageUrls[0]}
                         alt={`${prompt}`}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-cover"
                         onLoad={(e) => {
                           // 图片加载后打印尺寸
                           const img = e.target as HTMLImageElement;
@@ -244,7 +287,7 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
                         style={{
                           width: '100%',
                           height: '100%',
-                          objectFit: 'contain'
+                          objectFit: 'cover'
                         }}
                       />
                     </div>
@@ -254,52 +297,11 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
                     </div>
                   )}
                 </div>
-                
-                {/* 比例指示器 - 显示在左上角 */}
-                <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm z-10">
-                  {mainImageRatio}
-                </div>
-                
-                {/* 底部操作栏 - 鼠标悬停时显示，向下移动 */}
-                <div className="absolute bottom-4 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-                  {/* 下载按钮 */}
-                  <button 
-                    onClick={(e) => downloadImage(imageUrls[0], e)}
-                    className="text-white hover:text-gray-200 transition-colors bg-white/30 p-1.5 rounded-full backdrop-blur-sm"
-                    title={t('download')}
-                  >
-                    <ArrowDownTrayIcon className="w-5 h-5" />
-                  </button>
-                  
-                  {/* 点赞按钮 */}
-                  <button 
-                    onClick={(e) => handleThumbsUp(imageUrls[0], e)}
-                    className={`transition-colors p-1.5 rounded-full backdrop-blur-sm ${imageReactions[imageUrls[0]]?.liked ? 'text-green-500 bg-white/30' : 'text-white hover:text-gray-200 bg-white/30'}`}
-                    title={t('thumbsUp')}
-                  >
-                    {imageReactions[imageUrls[0]]?.liked ? 
-                      <HandThumbUpSolidIcon className="w-5 h-5" /> : 
-                      <HandThumbUpIcon className="w-5 h-5" />
-                    }
-                  </button>
-                  
-                  {/* 差评按钮 */}
-                  <button 
-                    onClick={(e) => handleThumbsDown(imageUrls[0], e)}
-                    className={`transition-colors p-1.5 rounded-full backdrop-blur-sm ${imageReactions[imageUrls[0]]?.disliked ? 'text-red-500 bg-white/30' : 'text-white hover:text-gray-200 bg-white/30'}`}
-                    title={t('thumbsDown')}
-                  >
-                    {imageReactions[imageUrls[0]]?.disliked ? 
-                      <HandThumbDownSolidIcon className="w-5 h-5" /> : 
-                      <HandThumbDownIcon className="w-5 h-5" />
-                    }
-                  </button>
-                </div>
               </div>
             </div>
           </div>
           
-          <div className="border-2 border-[#8B5CF6] rounded-lg p-4 mb-3 bg-white max-w-md mx-auto w-full">
+          <div className="border-2 border-[#8B5CF6] rounded-lg p-4 mb-3 bg-white w-full" style={{ maxWidth: 'min(100%, 500px)', margin: '0 auto' }}>
             <p className="text-gray-700">{prompt}</p>
           </div>
         </div>
@@ -343,28 +345,79 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
             onClick={(e) => e.stopPropagation()}
             style={{ width: '90vw', height: '90vh' }}
           >
-            <button 
-              onClick={closeImageView}
-              className="absolute top-4 right-4 bg-gray-200 text-gray-700 p-2 rounded-full hover:bg-gray-300 z-10"
-            >
-              <XMarkIcon className="w-6 h-6" />
-            </button>
-            
-            {/* 比例指示器 - 显示在左上角 */}
-            <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm z-10">
-              {detectImageRatio(viewingImage)}
-            </div>
-            
             {/* 图片容器，使用CSS限制最大尺寸并保持比例 */}
             <div className={`relative max-w-full max-h-full ${
               detectImageRatio(viewingImage) === '16:9' ? 'aspect-[16/9]' : 
               detectImageRatio(viewingImage) === '9:16' ? 'aspect-[9/16]' : 
               'aspect-square'
             }`}>
+              {/* 关闭按钮 - 移至图片内部右上角 */}
+              <button 
+                onClick={closeImageView}
+                className="absolute top-2 right-2 bg-gray-200/70 text-gray-700 p-2 rounded-full hover:bg-gray-300 z-20 backdrop-blur-sm"
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+              
+              {/* 比例指示器 - 移至图片内部左上角 */}
+              <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm z-20">
+                {detectImageRatio(viewingImage)}
+              </div>
+              
+              {/* 大图底部操作栏 - 移至图片内部底部 */}
+              <div className="absolute bottom-4 right-4 flex bg-white/70 p-2 rounded-full gap-3 shadow-md backdrop-blur-sm z-20">
+                {/* 移除保存按钮，保留下载和反馈按钮 */}
+                {(() => {
+                  const reaction = imageReactions[viewingImage] || { liked: false, disliked: false };
+                  return (
+                    <>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          downloadImage(viewingImage, e);
+                        }}
+                        className="text-gray-700 hover:text-gray-900"
+                        title={t('download')}
+                      >
+                        <ArrowDownTrayIcon className="w-5 h-5" />
+                      </button>
+                      
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleThumbsUp(viewingImage, e);
+                        }}
+                        className={`transition-colors ${reaction.liked ? 'text-green-500' : 'text-gray-700 hover:text-gray-900'}`}
+                        title={t('thumbsUp')}
+                      >
+                        {reaction.liked ? 
+                          <HandThumbUpSolidIcon className="w-5 h-5" /> : 
+                          <HandThumbUpIcon className="w-5 h-5" />
+                        }
+                      </button>
+                      
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleThumbsDown(viewingImage, e);
+                        }}
+                        className={`transition-colors ${reaction.disliked ? 'text-red-500' : 'text-gray-700 hover:text-gray-900'}`}
+                        title={t('thumbsDown')}
+                      >
+                        {reaction.disliked ? 
+                          <HandThumbDownSolidIcon className="w-5 h-5" /> : 
+                          <HandThumbDownIcon className="w-5 h-5" />
+                        }
+                      </button>
+                    </>
+                  );
+                })()}
+              </div>
+              
               <img
                 src={viewingImage}
                 alt={prompt}
-                className="w-full h-full object-contain rounded-lg"
+                className="w-full h-full object-cover rounded-lg"
                 onLoad={(e) => {
                   // 图片加载后打印尺寸
                   const img = e.target as HTMLImageElement;
@@ -378,71 +431,6 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
                   }
                 }}
               />
-            </div>
-            
-            {/* 大图底部操作栏 - 鼠标悬停在图片区域时显示，向下移动 */}
-            <div className="absolute bottom-8 right-4 flex bg-white/70 p-2 rounded-full gap-3 shadow-md backdrop-blur-sm">
-              {/* 保存按钮 */}
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  closeImageView();
-                  onSelectImage(viewingImage);
-                }}
-                className="text-gray-700 hover:text-gray-900 bg-green-100 p-1.5 rounded-full"
-                title="Save"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </button>
-              
-              {/* 查看大图时也根据状态显示对应的图标 */}
-              {(() => {
-                const reaction = imageReactions[viewingImage] || { liked: false, disliked: false };
-                return (
-                  <>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        downloadImage(viewingImage, e);
-                      }}
-                      className="text-gray-700 hover:text-gray-900"
-                      title={t('download')}
-                    >
-                      <ArrowDownTrayIcon className="w-5 h-5" />
-                    </button>
-                    
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleThumbsUp(viewingImage, e);
-                      }}
-                      className={`transition-colors ${reaction.liked ? 'text-green-500' : 'text-gray-700 hover:text-gray-900'}`}
-                      title={t('thumbsUp')}
-                    >
-                      {reaction.liked ? 
-                        <HandThumbUpSolidIcon className="w-5 h-5" /> : 
-                        <HandThumbUpIcon className="w-5 h-5" />
-                      }
-                    </button>
-                    
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleThumbsDown(viewingImage, e);
-                      }}
-                      className={`transition-colors ${reaction.disliked ? 'text-red-500' : 'text-gray-700 hover:text-gray-900'}`}
-                      title={t('thumbsDown')}
-                    >
-                      {reaction.disliked ? 
-                        <HandThumbDownSolidIcon className="w-5 h-5" /> : 
-                        <HandThumbDownIcon className="w-5 h-5" />
-                      }
-                    </button>
-                  </>
-                );
-              })()}
             </div>
           </div>
         </div>
