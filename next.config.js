@@ -9,7 +9,18 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'oaidalleapiprodscus.blob.core.windows.net',
+        pathname: '**',
+      },
+      {
+        protocol: 'https', 
+        hostname: '*.openai.com',
+        pathname: '**',
+      }
+    ],
     // 允许Base64图片URL（dataURL）
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

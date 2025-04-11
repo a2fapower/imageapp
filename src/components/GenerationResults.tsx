@@ -207,13 +207,14 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
             {/* 主图片容器 */}
             <div
               className="relative border border-gray-200 shadow-sm hover:shadow-md transition-shadow rounded-lg overflow-hidden"
+              style={{ width: mainImageRatio === '9:16' ? '60%' : '100%', maxWidth: 'min(100%, 500px)' }}
             >
               {/* 根据比例包装图片 */}
               <div
                 className={`group relative ${
-                  mainImageRatio === '16:9' ? 'aspect-[16/9] w-full max-w-md' : 
-                  mainImageRatio === '9:16' ? 'aspect-[9/16] w-[60%] max-w-[250px]' : 
-                  'aspect-square w-full max-w-md'
+                  mainImageRatio === '16:9' ? 'aspect-[16/9]' : 
+                  mainImageRatio === '9:16' ? 'aspect-[9/16]' : 
+                  'aspect-square'
                 }`}
                 data-ratio={mainImageRatio}
               >
@@ -222,19 +223,36 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
                   className="absolute inset-0 cursor-pointer"
                   onClick={() => handleImageClick(imageUrls[0])}
                 >
-                  <Image
-                    src={imageUrls[0]}
-                    alt={`${prompt}`}
-                    fill
-                    className="object-contain"
-                    priority
-                    unoptimized={true}
-                    onLoad={(e) => {
-                      // 图片加载后打印尺寸
-                      const img = e.target as HTMLImageElement;
-                      console.log('主图片加载完成，实际尺寸:', img.naturalWidth, 'x', img.naturalHeight);
-                    }}
-                  />
+                  {imageUrls[0] ? (
+                    <div className="relative w-full h-full">
+                      <img
+                        src={imageUrls[0]}
+                        alt={`${prompt}`}
+                        className="w-full h-full object-contain"
+                        onLoad={(e) => {
+                          // 图片加载后打印尺寸
+                          const img = e.target as HTMLImageElement;
+                          console.log('主图片加载完成，实际尺寸:', img.naturalWidth, 'x', img.naturalHeight);
+                        }}
+                        onError={(e) => {
+                          console.error('图片加载失败:', imageUrls[0]);
+                          // 尝试通过代理加载图片
+                          if (imageUrls[0] && imageUrls[0].startsWith('http')) {
+                            (e.target as HTMLImageElement).src = `/api/proxy-image?url=${encodeURIComponent(imageUrls[0])}`;
+                          }
+                        }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain'
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <p className="text-gray-500">图片加载中...</p>
+                    </div>
+                  )}
                 </div>
                 
                 {/* 比例指示器 - 显示在左上角 */}
@@ -352,11 +370,18 @@ const GenerationResults: React.FC<GenerationResultsProps> = ({
                   const img = e.target as HTMLImageElement;
                   console.log('图片加载完成，实际尺寸:', img.naturalWidth, 'x', img.naturalHeight);
                 }}
+                onError={(e) => {
+                  console.error('查看大图时加载失败:', viewingImage);
+                  // 尝试转发图片，通过代理加载
+                  if (viewingImage && viewingImage.startsWith('http')) {
+                    (e.target as HTMLImageElement).src = `/api/proxy-image?url=${encodeURIComponent(viewingImage)}`;
+                  }
+                }}
               />
             </div>
             
             {/* 大图底部操作栏 - 鼠标悬停在图片区域时显示，向下移动 */}
-            <div className="absolute bottom-8 right-4 flex bg-white/70 p-2 rounded-full gap-3 shadow-md backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="absolute bottom-8 right-4 flex bg-white/70 p-2 rounded-full gap-3 shadow-md backdrop-blur-sm">
               {/* 保存按钮 */}
               <button 
                 onClick={(e) => {

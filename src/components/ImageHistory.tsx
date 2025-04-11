@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { ClockIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from '@/lib/i18n';
@@ -30,6 +30,7 @@ interface ImageHistoryProps {
 
 const ImageHistory: React.FC<ImageHistoryProps> = ({ history, onSelect, onClear }) => {
   const { t } = useTranslation();
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   
   if (history.length === 0) {
     return (
@@ -40,6 +41,11 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ history, onSelect, onClear 
       </div>
     );
   }
+
+  const handleImageError = (id: string, url: string) => {
+    console.error(`历史记录图片加载失败 (${id}):`, url);
+    setImageErrors(prev => ({ ...prev, [id]: true }));
+  };
 
   return (
     <div className="mb-8">
@@ -67,12 +73,32 @@ const ImageHistory: React.FC<ImageHistoryProps> = ({ history, onSelect, onClear 
                 ratio === '9:16' ? 'aspect-[9/16]' : 
                 'aspect-square'
               }`}>
-                <Image
-                  src={item.imageUrl}
+                {/* 占位符背景 */}
+                <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
+                  <div className="text-gray-400 text-xs text-center p-2">
+                    {imageErrors[item.id] ? 
+                      '图片无法加载' : 
+                      '加载中...'}
+                  </div>
+                </div>
+                
+                {/* 实际图片 */}
+                <img
+                  src={imageErrors[item.id] 
+                    ? `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}` 
+                    : item.imageUrl}
                   alt={item.prompt}
-                  fill
-                  className="object-cover"
-                  unoptimized={true}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => {
+                    handleImageError(item.id, item.imageUrl);
+                    // 如果已经尝试过代理，不再尝试
+                    if (!imageErrors[item.id]) {
+                      (e.target as HTMLImageElement).src = `/api/proxy-image?url=${encodeURIComponent(item.imageUrl)}`;
+                    }
+                  }}
+                  style={{
+                    opacity: imageErrors[item.id] ? 0.8 : 1
+                  }}
                 />
                 
                 {/* 比例指示器 - 显示在左上角 */}

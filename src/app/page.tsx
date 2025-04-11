@@ -147,7 +147,19 @@ export default function Home() {
   const handleSelectFromHistory = (item: HistoryItem) => {
     setPrompt(item.prompt);
     setSize(item.size as ImageSize);
-    toast.success(locale === 'zh' ? '已加载提示词' : 'Prompt loaded');
+    
+    console.log('从历史记录加载图片:', item.imageUrl);
+    
+    // 尝试显示历史图片
+    try {
+      // 将历史记录中的图片显示在结果界面
+      setGeneratedImages([item.imageUrl]);
+      setShowResults(true);
+    } catch (error) {
+      console.error('从历史记录加载图片失败:', error);
+    }
+    
+    toast.success(locale === 'zh' ? '已加载提示词和图片' : 'Prompt and image loaded');
   };
 
   // 清空历史记录
@@ -243,11 +255,25 @@ export default function Home() {
 
   // 选择图像并保存到历史记录
   const handleSelectImage = (selectedUrl: string) => {
+    // 确保图片URL能够被持久化访问
+    let imageUrlToSave = selectedUrl;
+    
+    // 如果是OpenAI的URL，确保包含尺寸信息
+    if (selectedUrl.startsWith('https://oaidalleapiprodscus.blob.core.windows.net') ||
+        selectedUrl.includes('openai.com')) {
+      // 通过查询参数确保尺寸信息被保留
+      if (!selectedUrl.includes('size=')) {
+        imageUrlToSave = selectedUrl + (selectedUrl.includes('?') ? '&' : '?') + `size=${size}`;
+      }
+    }
+    
+    console.log('保存图片到历史记录:', imageUrlToSave);
+    
     // 将选择的图像保存到历史记录中
     const newItem: HistoryItem = {
       id: uuidv4(),
       prompt,
-      imageUrl: selectedUrl,
+      imageUrl: imageUrlToSave,
       timestamp: Date.now(),
       size: size
     };
