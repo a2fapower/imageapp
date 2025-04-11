@@ -294,13 +294,19 @@ export const useTranslation = () => {
     const savedLocale = localStorage.getItem('locale') as Locale;
     
     const supportedLocales = Object.keys(translations) as Locale[];
-    // 修改默认语言逻辑，始终使用英文作为默认语言，除非用户明确保存了其他语言设置
-    const defaultLocale = savedLocale && supportedLocales.includes(savedLocale) 
-      ? savedLocale 
-      : 'en';  // 默认使用英文
+    // 优先使用保存的语言设置，其次是浏览器语言（如果支持），最后才是默认语言
+    // 优先使用中文作为默认语言
+    let defaultLocale: Locale = 'zh';
+    
+    if (savedLocale && supportedLocales.includes(savedLocale)) {
+      defaultLocale = savedLocale;
+    } else if (browserLocale && supportedLocales.includes(browserLocale)) {
+      defaultLocale = browserLocale;
+    }
     
     globalLocale = defaultLocale;
     setLocale(defaultLocale);
+    localStorage.setItem('locale', defaultLocale);
   }, []);
 
   const changeLocale = (newLocale: Locale) => {
