@@ -42,6 +42,7 @@ export default function RootLayout({
           data-domain="kirami.vercel.app" 
           src="https://plausible.io/js/script.file-downloads.outbound-links.js"
         ></script>
+        <link rel="preload" href="/images/blue-armor-optimized.webp" as="image" />
       </head>
       <body className={inter.className}>
         {children}

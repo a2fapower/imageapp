@@ -89,9 +89,11 @@ export default function LandingPage() {
         
         <div className="w-full max-w-[1000px] h-[600px] mx-auto my-10 rounded-xl overflow-hidden shadow-lg relative">
           <img 
-            src="/images/blue-armor.jpg" 
+            src="/images/blue-armor-optimized.webp" 
             alt="Kirami AI艺术创作示例" 
             className="w-full h-full object-cover"
+            loading="eager"
+            fetchPriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/30 flex flex-col items-center justify-end px-4 pb-12">
             <h2 className="text-7xl font-bold gradient-text leading-tight text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">Kirami</h2>

@@ -55,6 +55,8 @@ const HeroSection = ({
             src={imageSrc} 
             alt="Kirami Cover" 
             className="w-full h-full object-cover bg-transparent"
+            loading="eager"
+            fetchPriority="high"
           />
         ) : (
           <div className="w-full h-full bg-gray-200"></div>
@@ -280,7 +282,7 @@ export default function Home() {
 
       {/* 英雄区域 */}
       <HeroSection 
-        imageSrc="/images/blue-armor.jpg"
+        imageSrc="/images/blue-armor-optimized.webp"
         title="Kirami"
         subtitle={locale === 'zh' ? '帮你生成独特图像' : 'helps you generate unique images'}
       />
