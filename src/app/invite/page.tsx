@@ -78,7 +78,7 @@ export default function InvitePage() {
               </p>
               
               <a 
-                href="/"
+                href="/home"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-indigo-600 text-white font-medium rounded-full hover:bg-indigo-500 transition-all duration-300 text-lg shadow-xl hover:shadow-indigo-500/30 transform hover:-translate-y-1"
               >
                 {locale === 'zh' ? '立即开始创作' : 'Start Creating Now'} 
